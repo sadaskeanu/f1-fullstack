@@ -1,14 +1,32 @@
-- name: Setup Node.js
-  uses: actions/setup-node@v3
-  with:
-    node-version: "18"
+name: CI
 
-- name: Install dependencies
-  run: |
-    cd server
-    npm ci
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
 
-- name: Run tests
-  run: |
-    cd server
-    npm test
+jobs:
+  test-backend:
+    name: Test Backend
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: "18"
+
+      - name: Install dependencies
+        run: |
+          cd server
+          npm ci
+
+      - name: Run tests
+        run: |
+          cd server
+          npm test
