@@ -1,1 +1,14 @@
-stages:
+- name: Setup Node.js
+  uses: actions/setup-node@v3
+  with:
+    node-version: "18"
+
+- name: Install dependencies
+  run: |
+    cd server
+    npm ci
+
+- name: Run tests
+  run: |
+    cd server
+    npm test
