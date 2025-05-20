@@ -26,7 +26,7 @@ export function mapToWorldChampion(raw: ErgastResponse): ChampionData {
   return {
     season: Number(list.season),
     driverId: standing.Driver.driverId,
-    name: `${standing.Driver.givenName} ${standing.Driver.familyName}`,
+    name: standing.Driver.givenName,
     familyName: standing.Driver.familyName,
     points: Number(standing.points),
     team: standing.Constructors[0].name,
