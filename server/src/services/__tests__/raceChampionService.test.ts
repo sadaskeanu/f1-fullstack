@@ -1,6 +1,6 @@
 import nock from "nock";
 import { fetchRaceChampions, mapToRaceChampions } from "../RaceChampionService";
-import type { RaceResponse } from "../../types/RaceChampionTypes";
+import type { RaceResponse } from "../../models/RaceChampionModel";
 
 describe("RaceChampionService", () => {
   const season = 2024;

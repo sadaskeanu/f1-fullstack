@@ -1,6 +1,9 @@
-import prisma from "../../config/db";
-import { RaceChampionData } from "../../types/RaceChampionTypes";
-import { fetchRaceChampions, mapToRaceChampions } from "../RaceChampionService";
+import prisma from "../config/db";
+import { RaceChampionData } from "../models/RaceChampionModel";
+import {
+  fetchRaceChampions,
+  mapToRaceChampions,
+} from "../services/RaceChampionService";
 
 export async function upsertRaceChampions(
   season: number

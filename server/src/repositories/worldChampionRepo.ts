@@ -1,9 +1,9 @@
-import prisma from "../../config/db";
+import prisma from "../config/db";
 import type { WorldChampion } from "@prisma/client";
 import {
   fetchWorldChampion,
   mapToWorldChampion,
-} from "../WorldChampionService";
+} from "../services/WorldChampionService";
 
 export async function upsertWorldChampion(
   season: number

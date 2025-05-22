@@ -1,4 +1,4 @@
-import { RaceResponse, RaceChampionData } from "../types/RaceChampionTypes";
+import { RaceResponse, RaceChampionData } from "../models/RaceChampionModel";
 
 export async function fetchRaceChampions(
   season: number

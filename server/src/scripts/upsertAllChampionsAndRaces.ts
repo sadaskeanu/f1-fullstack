@@ -1,5 +1,5 @@
-import { upsertWorldChampion } from "../services/repos/worldChampionRepo";
-import { upsertRaceChampions } from "../services/repos/raceChampionRepo";
+import { upsertWorldChampion } from "../repositories/worldChampionRepo";
+import { upsertRaceChampions } from "../repositories/raceChampionRepo";
 import { delay } from "../utils/delay";
 
 export async function runUpsertAll() {

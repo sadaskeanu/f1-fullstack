@@ -1,7 +1,7 @@
 import type {
   WorldChampionResponse,
   WorldChampionData,
-} from "../types/WorldChampionTypes";
+} from "../models/WorldChampionModel";
 
 export async function fetchWorldChampion(
   season: number
