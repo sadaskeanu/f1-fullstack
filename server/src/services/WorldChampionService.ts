@@ -1,11 +1,11 @@
-import type { ErgastResponse } from "./ergastTypes";
-import type { Prisma } from "@prisma/client";
-
-export type ChampionData = Prisma.WorldChampionUncheckedCreateInput;
+import type {
+  WorldChampionResponse,
+  WorldChampionData,
+} from "../types/WorldChampionTypes";
 
 export async function fetchWorldChampion(
   season: number
-): Promise<ErgastResponse> {
+): Promise<WorldChampionResponse> {
   const base = process.env.ERGAST_API_BASE;
   if (!base) {
     throw new Error("Missing ERGAST_API_BASE environment variable");
@@ -17,10 +17,12 @@ export async function fetchWorldChampion(
       `Ergast API error: ${response.status} ${response.statusText}`
     );
   }
-  return (await response.json()) as ErgastResponse;
+  return (await response.json()) as WorldChampionResponse;
 }
 
-export function mapToWorldChampion(raw: ErgastResponse): ChampionData {
+export function mapToWorldChampion(
+  raw: WorldChampionResponse
+): WorldChampionData {
   const list = raw.MRData.StandingsTable.StandingsLists[0];
   const standing = list.DriverStandings[0];
   return {

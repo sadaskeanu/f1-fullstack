@@ -26,10 +26,12 @@ model WorldChampion {
 model RaceChampion {
   id               Int             @id @default(autoincrement())
   season           Int
+  race             String
   driverId         String
   driverName       String
   driverFamilyName String
   team             String
   worldChampion    WorldChampion   @relation(fields: [season], references: [season])
-  @@index([season])
+  isWorldChampion  Boolean         @default(false)
+  @@unique([season, race])
 }

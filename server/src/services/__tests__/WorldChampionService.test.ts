@@ -1,5 +1,8 @@
 import nock from "nock";
-import { fetchWorldChampion, mapToWorldChampion } from "../ergastService";
+import {
+  fetchWorldChampion,
+  mapToWorldChampion,
+} from "../WorldChampionService";
 
 describe("ErgastService", () => {
   const season = 2024;
