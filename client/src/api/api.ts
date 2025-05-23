@@ -12,7 +12,6 @@ export async function fetchSeasons(): Promise<WorldChampion[]> {
 }
 
 export async function fetchWinners(year: number): Promise<RaceWinner[]> {
-  // Axios will throw if the HTTP status is not 2xx
   const response = await apiClient.get<RaceWinner[]>(`/${year}/winners`);
   return response.data;
 }
