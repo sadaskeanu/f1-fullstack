@@ -1,4 +1,5 @@
 import express from "express";
+import { ZodError } from "zod";
 import { Request, Response, NextFunction } from "express";
 import cors from "cors";
 import prisma from "./config/db";
@@ -26,6 +27,9 @@ app.use("/api/seasons", seasonsRoutes);
 app.use("/api", winnersRoutes);
 
 app.use((err: unknown, req: Request, res: Response, next: NextFunction) => {
+  if (err instanceof ZodError) {
+    res.status(400).json({ errors: err.errors });
+  }
   console.error("Unhandled error:", err);
   res.status(500).json({ error: "Internal Server Error" });
 });
