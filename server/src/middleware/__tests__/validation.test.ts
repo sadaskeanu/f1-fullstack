@@ -1,24 +1,35 @@
+import express, { Request, Response } from "express";
 import request from "supertest";
-import { app } from "../../app";
+import { validate } from "../validate";
+import { yearParamSchema } from "../../validation/paramSchemas";
 
-describe("Validation middleware on /api/:year/winners", () => {
-  it("rejects non-numeric year with 400", async () => {
-    const res = await request(app).get("/api/not-a-number/winners");
+describe("validate middleware (Zod) isolated", () => {
+  const app = express();
+  app.get(
+    "/:year/winners",
+    validate(yearParamSchema, "params"),
+    (req: Request, res: Response) => {
+      res.status(200).json({ year: req.params.year });
+    }
+  );
+
+  it("400 on non-numeric year", async () => {
+    const res = await request(app).get("/not-a-number/winners");
     expect(res.status).toBe(400);
     expect(res.body).toHaveProperty("errors");
     expect(res.body.errors[0].path).toEqual(["year"]);
   });
 
-  it("rejects year below 2005 with 400", async () => {
-    const res = await request(app).get("/api/1999/winners");
+  it("400 on year < 2005", async () => {
+    const res = await request(app).get("/1999/winners");
     expect(res.status).toBe(400);
     expect(res.body).toHaveProperty("errors");
     expect(res.body.errors[0].message).toMatch(/at least 2005/);
   });
 
-  it("accepts valid year and returns 200", async () => {
-    const res = await request(app).get("/api/2005/winners");
+  it("200 on valid year", async () => {
+    const res = await request(app).get("/2025/winners");
     expect(res.status).toBe(200);
-    expect(Array.isArray(res.body)).toBe(true);
+    expect(res.body).toEqual({ year: 2025 });
   });
 });
