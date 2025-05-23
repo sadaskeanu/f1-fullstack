@@ -1,0 +1,11 @@
+.app {
+  display: flex;
+  color: #212124;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  padding: 24px;
+  min-height: 100vh;
+  background: linear-gradient(150deg, #ecdabf, #dbd7d7);
+}
