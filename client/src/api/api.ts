@@ -11,7 +11,7 @@ export async function getWorldChampions(): Promise<WorldChampion[]> {
   return response.data;
 }
 
-export async function fetchWinners(year: number): Promise<RaceWinner[]> {
+export async function getRaceChampions(year: number): Promise<RaceWinner[]> {
   const response = await apiClient.get<RaceWinner[]>(`/${year}/winners`);
   return response.data;
 }

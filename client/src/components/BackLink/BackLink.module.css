@@ -1,0 +1,41 @@
+.wrap {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.link {
+  font-weight: 500;
+}
+
+.arrow {
+  position: relative;
+  margin-top: 20px;
+  width: 20px;
+  height: 20px;
+  border-top: 3px solid rgb(29, 24, 24);
+  border-right: 3px solid rgb(29, 24, 24);
+  transition: box-shadow 200ms ease, border-color 200ms ease;
+}
+
+.left {
+  left: 0;
+  transform: translate3d(0, -50%, 0) rotate(-135deg);
+}
+
+.arrow:before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-40%, -60%) rotate(45deg);
+}
+
+.wrap:hover .arrow {
+  border-color: rgb(173, 30, 30);
+  box-shadow: 3px -3px 0 rgb(29, 24, 24);
+}
+
+.wrap:hover .link {
+  color: rgb(173, 30, 30);
+}
