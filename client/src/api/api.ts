@@ -6,7 +6,7 @@ const API_BASE = import.meta.env.VITE_API_BASE as string;
 
 const apiClient = axios.create({ baseURL: API_BASE });
 
-export async function fetchSeasons(): Promise<WorldChampion[]> {
+export async function getWorldChampions(): Promise<WorldChampion[]> {
   const response = await apiClient.get<WorldChampion[]>("/seasons");
   return response.data;
 }

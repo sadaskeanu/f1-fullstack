@@ -1,0 +1,14 @@
+.icon {
+  animation: rotate 2s infinite linear;
+}
+
+.text {
+  margin: 20px;
+  font-weight: 600;
+}
+
+@keyframes rotate {
+  to {
+    transform: rotate(360deg);
+  }
+}
