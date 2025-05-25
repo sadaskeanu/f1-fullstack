@@ -51,7 +51,7 @@ export default function Champions() {
         {champions.map((race) => {
           const isHighlighted = race.isWorldChampion;
           return (
-            <li key={race.race}>
+            <li key={race.id}>
               <Card
                 race={race.race}
                 name={race.driverName}

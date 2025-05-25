@@ -1,4 +1,5 @@
 export interface WorldChampion {
+  id: number;
   season: number;
   driverId: string;
   name: string;

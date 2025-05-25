@@ -14,7 +14,8 @@ datasource db {
 }
 
 model WorldChampion {
-  season        Int              @id
+  id            Int             @id @default(autoincrement())
+  season        Int             @unique
   driverId      String
   points        Int
   name          String
@@ -31,7 +32,8 @@ model RaceChampion {
   driverName       String
   driverFamilyName String
   team             String
-  worldChampion    WorldChampion   @relation(fields: [season], references: [season])
   isWorldChampion  Boolean         @default(false)
+  worldChampion    WorldChampion   @relation(fields: [season], references: [season])
   @@unique([season, race])
+  @@index([season])
 }

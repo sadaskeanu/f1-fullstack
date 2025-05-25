@@ -38,7 +38,7 @@ export default function WorldsChampions() {
       <Heading level={1}>F1 WORLD CHAMPIONS</Heading>
       <List>
         {worldChampions.map((champion) => (
-          <li key={champion.driverId}>
+          <li key={champion.id}>
             <Link to={`/season/${champion.season}`}>
               <Card
                 season={champion.season}
