@@ -2,22 +2,39 @@ import type {
   WorldChampionResponse,
   WorldChampionData,
 } from "../models/WorldChampionModel";
+import { fetchWithTimeout } from "../utils/fetchWithTimeout";
 
 export async function fetchWorldChampion(
   season: number
 ): Promise<WorldChampionResponse> {
   const base = process.env.ERGAST_API_BASE;
-  if (!base) {
-    throw new Error("Missing ERGAST_API_BASE environment variable");
-  }
+  if (!base) throw new Error("Missing ERGAST_API_BASE environment variable");
+
   const url = `${base}f1/${season}/driverStandings/1.json`;
-  const response = await fetch(url);
-  if (!response.ok) {
+
+  try {
+    const response = await fetchWithTimeout(url, 5000);
+
+    if (!response.ok) {
+      throw new Error(
+        `Server API responded with ${response.status}: ${response.statusText}`
+      );
+    }
+
+    const json = await response.json();
+
+    const standings = json?.MRData?.StandingsTable?.StandingsLists;
+    if (!standings || standings.length === 0) {
+      throw new Error(`No world champion data found for season ${season}`);
+    }
+
+    return json;
+  } catch (err: unknown) {
+    const message = err instanceof Error ? err.message : String(err);
     throw new Error(
-      `Ergast API error: ${response.status} ${response.statusText}`
+      `Failed to fetch world champion for season ${season}: ${message}`
     );
   }
-  return (await response.json()) as WorldChampionResponse;
 }
 
 export function mapToWorldChampion(

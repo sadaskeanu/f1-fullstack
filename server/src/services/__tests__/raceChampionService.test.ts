@@ -4,7 +4,7 @@ import type { RaceResponse } from "../../models/RaceChampionModel";
 
 describe("RaceChampionService", () => {
   const season = 2024;
-  const base = "https://ergast.com/api/";
+  const base = "https://api.jolpi.ca/ergast/";
 
   beforeAll(() => {
     process.env.ERGAST_API_BASE = base;
@@ -18,7 +18,24 @@ describe("RaceChampionService", () => {
     nock(base).get(`/f1/${season}/results/1.json`).reply(500);
 
     await expect(fetchRaceChampions(season)).rejects.toThrow(
-      "Ergast API error"
+      "Server API error"
+    );
+  });
+
+  it("fetchRaceChampions() throws on empty races", async () => {
+    nock(base)
+      .get(`/f1/${season}/results/1.json`)
+      .reply(200, {
+        MRData: {
+          RaceTable: {
+            season: `${season}`,
+            Races: [],
+          },
+        },
+      });
+
+    await expect(fetchRaceChampions(season)).rejects.toThrow(
+      `No race results found for season ${season}`
     );
   });
 

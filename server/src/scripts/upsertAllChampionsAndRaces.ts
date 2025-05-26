@@ -13,9 +13,7 @@ export async function runUpsertAll() {
     while (attempts < maxRetries) {
       try {
         const record = await upsertWorldChampion(year);
-        console.log(
-          `✓ World Champion upserted for ${year}: ${record.driverId}`
-        );
+        console.log(`World Champion upserted for ${year}: ${record.driverId}`);
         break;
       } catch (error: any) {
         attempts++;
@@ -25,13 +23,13 @@ export async function runUpsertAll() {
         );
         if (isRateLimit && attempts < maxRetries) {
           console.log(
-            `  → Rate limited on ${year}, retrying in ${2000 * attempts}ms...`
+            `Rate limited on ${year}, retrying in ${2000 * attempts}ms...`
           );
           await delay(2000 * attempts);
           continue;
         }
         console.error(
-          `  ✗ Failed to upsert World Champion for ${year} after ${attempts} attempts.`
+          `Failed to upsert World Champion for ${year} after ${attempts} attempts.`
         );
         break;
       }
@@ -39,10 +37,10 @@ export async function runUpsertAll() {
     await delay(100);
     try {
       await upsertRaceChampions(year);
-      console.log(`✓ Race winners upserted for ${year}`);
+      console.log(`Race winners upserted for ${year}`);
     } catch (err: any) {
       console.error(
-        `✗ Failed to upsert Race Winners for ${year}: ${err.message}`
+        `Failed to upsert Race Winners for ${year}: ${err.message}`
       );
     }
     await delay(200);

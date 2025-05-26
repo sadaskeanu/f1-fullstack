@@ -1,4 +1,5 @@
 import { RaceResponse, RaceChampionData } from "../models/RaceChampionModel";
+import { fetchWithTimeout } from "../utils/fetchWithTimeout";
 
 export async function fetchRaceChampions(
   season: number
@@ -7,12 +8,29 @@ export async function fetchRaceChampions(
   if (!base) throw new Error("Missing ERGAST_API_BASE environment variable");
 
   const url = `${base}f1/${season}/results/1.json`;
-  const response = await fetch(url);
-  if (!response.ok)
+
+  try {
+    const response = await fetchWithTimeout(url, 5000);
+
+    if (!response.ok) {
+      throw new Error(
+        `Server API error: ${response.status} ${response.statusText}`
+      );
+    }
+
+    const json = await response.json();
+    const races = json?.MRData?.RaceTable?.Races;
+    if (!races || races.length === 0) {
+      throw new Error(`No race results found for season ${season}`);
+    }
+
+    return json;
+  } catch (err: unknown) {
+    const message = err instanceof Error ? err.message : String(err);
     throw new Error(
-      `Ergast API error: ${response.status} ${response.statusText}`
+      `Failed to fetch race champions for season ${season}: ${message}`
     );
-  return response.json() as Promise<RaceResponse>;
+  }
 }
 
 export function mapToRaceChampions(

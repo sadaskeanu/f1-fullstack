@@ -11,6 +11,17 @@ export const app = express();
 app.use(cors());
 app.use(express.json());
 
+app.use((err: Error, req: Request, res: Response, _next: NextFunction) => {
+  console.error(err);
+
+  const statusCode =
+    res.statusCode && res.statusCode !== 200 ? res.statusCode : 500;
+
+  res.status(statusCode).json({
+    error: err.message || "Unexpected server error",
+  });
+});
+
 app.get("/test-db", async (_req, res) => {
   try {
     const [{ now }] = await prisma.$queryRaw<

@@ -6,7 +6,7 @@ import {
 
 describe("ErgastService", () => {
   const season = 2024;
-  const base = "https://ergast.com/api/";
+  const base = "https://api.jolpi.ca/ergast/";
 
   beforeAll(() => {
     process.env.ERGAST_API_BASE = base;
@@ -18,7 +18,23 @@ describe("ErgastService", () => {
     nock(base).get(`/f1/${season}/driverStandings/1.json`).reply(500);
 
     await expect(fetchWorldChampion(season)).rejects.toThrow(
-      "Ergast API error"
+      "Server API responded with 500"
+    );
+  });
+
+  it("fetchWorldChampion() throws on empty standings list", async () => {
+    nock(base)
+      .get(`/f1/${season}/driverStandings/1.json`)
+      .reply(200, {
+        MRData: {
+          StandingsTable: {
+            StandingsLists: [],
+          },
+        },
+      });
+
+    await expect(fetchWorldChampion(season)).rejects.toThrow(
+      `No world champion data found for season ${season}`
     );
   });
 
