@@ -23,6 +23,7 @@ const mapIconToSrc = {
 export default function Card(props: Props) {
   return (
     <div
+      data-testid="card"
       className={clsx(
         styles.card,
         props.isHighlighted && styles.isHighlighted

@@ -21,12 +21,34 @@ jobs:
         with:
           node-version: "18"
 
-      - name: Install dependencies
+      - name: Install backend dependencies
         run: |
           cd server
           npm ci
 
-      - name: Run tests
+      - name: Run backend tests
         run: |
           cd server
+          npm test
+
+  test-client:
+    name: Test Client
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: "18"
+
+      - name: Install client dependencies
+        run: |
+          cd client
+          npm ci
+
+      - name: Run client tests
+        run: |
+          cd client
           npm test
