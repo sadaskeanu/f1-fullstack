@@ -12,9 +12,9 @@ import type { RaceWinner } from "../../types/RaceChampionsData";
 export default function Champions() {
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
-  let [champions, setChampions] = useState<RaceWinner[] | null>(null);
+  const [champions, setChampions] = useState<RaceWinner[] | null>(null);
 
-  let { season } = useParams<{ season: string }>();
+  const { season } = useParams<{ season: string }>();
   const navigate = useNavigate();
 
   useEffect(() => {
