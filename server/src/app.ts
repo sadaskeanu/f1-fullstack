@@ -5,22 +5,16 @@ import cors from "cors";
 import prisma from "./config/db";
 import seasonsRoutes from "./routes/seasonsRoutes";
 import winnersRoutes from "./routes/winnersRoutes";
+import swaggerUi from "swagger-ui-express";
+import swaggerSpec from "./docs/swaggerConfig";
 
 export const app = express();
 
 app.use(cors());
 app.use(express.json());
 
-app.use((err: Error, req: Request, res: Response, _next: NextFunction) => {
-  console.error(err);
-
-  const statusCode =
-    res.statusCode && res.statusCode !== 200 ? res.statusCode : 500;
-
-  res.status(statusCode).json({
-    error: err.message || "Unexpected server error",
-  });
-});
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+console.log("Swagger Spec loaded:", JSON.stringify(swaggerSpec, null, 2));
 
 app.get("/test-db", async (_req, res) => {
   try {
@@ -36,6 +30,17 @@ app.get("/test-db", async (_req, res) => {
 
 app.use("/api/seasons", seasonsRoutes);
 app.use("/api", winnersRoutes);
+
+app.use((err: Error, req: Request, res: Response, _next: NextFunction) => {
+  console.error(err);
+
+  const statusCode =
+    res.statusCode && res.statusCode !== 200 ? res.statusCode : 500;
+
+  res.status(statusCode).json({
+    error: err.message || "Unexpected server error",
+  });
+});
 
 app.use((err: unknown, req: Request, res: Response, next: NextFunction) => {
   if (err instanceof ZodError) {
