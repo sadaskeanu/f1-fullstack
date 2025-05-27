@@ -11,7 +11,7 @@ import type { RaceWinner } from "../../types/RaceChampionsData";
 
 export default function Champions() {
   const [isLoading, setIsLoading] = useState(false);
-  const [hasError, setHasError] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
   let [champions, setChampions] = useState<RaceWinner[] | null>(null);
 
   let { season } = useParams<{ season: string }>();
@@ -25,21 +25,22 @@ export default function Champions() {
 
     setIsLoading(true);
 
-    Promise.all([getRaceChampions(Number(season))])
-      .then(([champions]) => {
+    getRaceChampions(Number(season))
+      .then((champions) => {
         setChampions(champions);
       })
-      .then(() => {
-        setIsLoading(false);
+      .catch((err) => {
+        const message =
+          err?.message || "Failed to load race champions for this season.";
+        setErrorMessage(message);
       })
-      .catch(() => {
-        setHasError(true);
+      .finally(() => {
+        setIsLoading(false);
       });
-
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  if (hasError) return <Error />;
+  if (errorMessage) return <Error message={errorMessage} />;
 
   if (!champions || isLoading) return <Loader />;
 

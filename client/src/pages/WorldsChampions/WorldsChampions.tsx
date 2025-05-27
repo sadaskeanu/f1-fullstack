@@ -10,7 +10,7 @@ import Card from "../../components/Card/Card";
 
 export default function WorldsChampions() {
   const [isLoading, setIsLoading] = useState(false);
-  const [hasError, setHasError] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [worldChampions, setWorldChampions] = useState<WorldChampion[] | null>(
     null
   );
@@ -19,18 +19,16 @@ export default function WorldsChampions() {
     setIsLoading(true);
 
     getWorldChampions()
-      .then((worldChampions) => {
-        setWorldChampions(worldChampions);
+      .then(setWorldChampions)
+      .catch((err) => {
+        setErrorMessage(err?.message || "Failed to load world champions.");
       })
-      .then(() => {
+      .finally(() => {
         setIsLoading(false);
-      })
-      .catch(() => {
-        setHasError(true);
       });
   }, []);
 
-  if (hasError) return <Error />;
+  if (errorMessage) return <Error message={errorMessage} />;
 
   if (!worldChampions || isLoading) return <Loader />;
   return (
