@@ -1,6 +1,12 @@
 version: "3.9"
 
 services:
+  redis:
+    image: redis:7
+    container_name: redis
+    ports:
+      - "6379:6379"
+
   backend:
     build:
       context: ./server
@@ -8,9 +14,12 @@ services:
     env_file:
       - ./server/.env
     environment:
-      ERGAST_API_BASE: https://ergast.com/api/
+      ERGAST_API_BASE: https://api.jolpi.ca/ergast/
+      REDIS_HOST: redis
     ports:
       - "4000:4000"
+    depends_on:
+      - redis
 
   frontend:
     build:

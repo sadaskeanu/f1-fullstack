@@ -1,6 +1,15 @@
 import { getWinners } from "../winnersController";
 import prisma from "../../config/db";
 
+jest.mock("../../config/redis", () => ({
+  get: jest.fn().mockResolvedValue(null),
+  set: jest.fn().mockResolvedValue("OK"),
+}));
+
+beforeEach(() => {
+  jest.spyOn(console, "error").mockImplementation(() => {});
+});
+
 describe("winnersController.getWinners", () => {
   afterEach(() => {
     jest.restoreAllMocks();

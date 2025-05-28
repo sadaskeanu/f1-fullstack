@@ -1,5 +1,15 @@
 import { getSeasons } from "../seasonsController";
 import prisma from "../../config/db";
+import redis from "../../config/redis";
+
+jest.mock("../../config/redis", () => ({
+  get: jest.fn().mockResolvedValue(null),
+  set: jest.fn().mockResolvedValue("OK"),
+}));
+
+beforeEach(() => {
+  jest.spyOn(console, "error").mockImplementation(() => {});
+});
 
 describe("seasonsController.getSeasons", () => {
   afterEach(() => {
@@ -46,5 +56,19 @@ describe("seasonsController.getSeasons", () => {
     await getSeasons(req, res, next);
 
     expect(next).toHaveBeenCalledWith(error);
+  });
+
+  it("returns cached data if available", async () => {
+    const cachedData = JSON.stringify([{ season: 2022, team: "Red Bull" }]);
+    (redis.get as jest.Mock).mockResolvedValueOnce(cachedData);
+
+    const req = {} as any;
+    const json = jest.fn();
+    const res = { json } as any;
+    const next = jest.fn();
+
+    await getSeasons(req, res, next);
+
+    expect(json).toHaveBeenCalledWith(JSON.parse(cachedData));
   });
 });
