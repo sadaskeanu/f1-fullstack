@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import prisma from "../config/db";
+import redis from "../config/redis";
 
 export async function getWinners(
   req: Request,
@@ -12,13 +13,29 @@ export async function getWinners(
     return;
   }
 
+  const cacheKey = `winners:${year}`;
+
   try {
+    const cached = await redis.get(cacheKey);
+    if (cached) {
+      console.log(`→ Redis cache hit for ${cacheKey}`);
+      res.json(JSON.parse(cached));
+      return;
+    }
+
+    console.log(`→ Redis cache miss for ${cacheKey}: saving to Redis`);
+
     const winners = await prisma.raceChampion.findMany({
       where: { season: year },
       orderBy: { race: "asc" },
     });
+
+    const oneWeekInSeconds = 60 * 60 * 24 * 7;
+    await redis.set(cacheKey, JSON.stringify(winners), "EX", oneWeekInSeconds);
+
     res.json(winners);
   } catch (err) {
+    console.error("getWinners error:", err);
     next(err);
   }
 }
