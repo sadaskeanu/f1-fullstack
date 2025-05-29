@@ -18,28 +18,30 @@ jobs:
         with:
           node-version: 18
 
-      # Install backend dependencies
+      # Backend
       - name: Install server dependencies
         run: npm install
         working-directory: ./server
 
       - name: Run Snyk on server
         uses: snyk/actions/node@v1
+        with:
+          command: test
+          args: --severity-threshold=high
         env:
           SNYK_TOKEN: b9898c46-f1dd-407b-be7c-2661c0f387e1
-        with:
-          args: test --severity-threshold=high
-          project: ./server
+        working-directory: ./server
 
-      # Install frontend dependencies
+      # Frontend
       - name: Install client dependencies
         run: npm install
         working-directory: ./client
 
       - name: Run Snyk on client
         uses: snyk/actions/node@v1
+        with:
+          command: test
+          args: --severity-threshold=high
         env:
           SNYK_TOKEN: b9898c46-f1dd-407b-be7c-2661c0f387e1
-        with:
-          args: test --severity-threshold=high
-          project: ./client
+        working-directory: ./client
