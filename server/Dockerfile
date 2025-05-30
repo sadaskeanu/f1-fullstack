@@ -17,13 +17,13 @@ RUN npm install
 COPY . .
 
 # Generate Prisma client & build TS
-RUN npm run prisma:generate 
+RUN npm run prisma:generate
 
 # Build the server app 
-RUN npm run build             
+RUN npm run build
 
 # Expose the port your app runs on
 EXPOSE 4000
 
-# Start the compiled server
-CMD [ "npm", "start" ]
+# Run the data seeding script before starting the backend server
+CMD npm run upsert:all && npm start
