@@ -16,10 +16,27 @@ export default function WorldsChampions() {
   );
 
   useEffect(() => {
+    const cacheKey = "worldChampions";
+    const ttlKey = "worldChampionsTTL";
+    const now = Date.now();
+    const oneDayInMs = 24 * 60 * 60 * 1000;
+
+    const cached = localStorage.getItem(cacheKey);
+    const ttl = localStorage.getItem(ttlKey);
+
+    if (cached && ttl && now < Number(ttl)) {
+      setWorldChampions(JSON.parse(cached));
+      return;
+    }
+
     setIsLoading(true);
 
     getWorldChampions()
-      .then(setWorldChampions)
+      .then((data) => {
+        setWorldChampions(data);
+        localStorage.setItem(cacheKey, JSON.stringify(data));
+        localStorage.setItem(ttlKey, String(now + oneDayInMs));
+      })
       .catch((err) => {
         setErrorMessage(err?.message || "Failed to load world champions.");
       })

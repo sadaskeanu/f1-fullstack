@@ -23,11 +23,26 @@ export default function Champions() {
       return;
     }
 
+    const cacheKey = `raceWinners:${season}`;
+    const ttlKey = `raceWinnersTTL:${season}`;
+    const now = Date.now();
+    const oneDayInMs = 24 * 60 * 60 * 1000;
+
+    const cached = localStorage.getItem(cacheKey);
+    const ttl = localStorage.getItem(ttlKey);
+
+    if (cached && ttl && now < Number(ttl)) {
+      setChampions(JSON.parse(cached));
+      return;
+    }
+
     setIsLoading(true);
 
     getRaceChampions(Number(season))
       .then((champions) => {
         setChampions(champions);
+        localStorage.setItem(cacheKey, JSON.stringify(champions));
+        localStorage.setItem(ttlKey, String(now + oneDayInMs));
       })
       .catch((err) => {
         const message =
@@ -37,8 +52,7 @@ export default function Champions() {
       .finally(() => {
         setIsLoading(false);
       });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [season, navigate]);
 
   if (errorMessage) return <Error message={errorMessage} />;
 
