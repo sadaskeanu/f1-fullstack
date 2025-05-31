@@ -1,0 +1,12 @@
+[project]
+name = "my-fullstack-app"
+
+[services.client]
+source = "client"
+dockerfile = "client/Dockerfile"
+start = { cmd = null, port = 80 }
+
+[services.server]
+source = "server"
+dockerfile = "server/Dockerfile"
+start = { cmd = null, port = 4000 }
