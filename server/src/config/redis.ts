@@ -7,4 +7,8 @@ const redis = process.env.REDIS_URL
       port: Number(process.env.REDIS_PORT) || 6379,
     });
 
+redis.on("error", (err) => {
+  console.error("Redis connection error:", err);
+});
+
 export default redis;

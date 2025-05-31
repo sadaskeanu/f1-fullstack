@@ -5,7 +5,11 @@ const port = process.env.PORT ?? 4000;
 
 async function startServer() {
   try {
+    console.log("Starting server setup...");
+
     await scheduleRefreshJobs();
+    console.log("Scheduled refresh jobs");
+
     app.listen(port, () => {
       console.log(`
         🚀 Server is running!
