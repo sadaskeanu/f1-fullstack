@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import prisma from "../config/db";
 import redis from "../config/redis";
+import getRedis from "../config/redis";
 
 export async function getWinners(
   req: Request,
@@ -16,6 +17,7 @@ export async function getWinners(
   const cacheKey = `winners:${year}`;
 
   try {
+    const redis = getRedis();
     const cached = await redis.get(cacheKey);
     if (cached) {
       console.log(`→ Redis cache hit for ${cacheKey}`);

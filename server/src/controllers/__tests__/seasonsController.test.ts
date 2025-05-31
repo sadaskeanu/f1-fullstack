@@ -1,6 +1,7 @@
 import { getSeasons } from "../seasonsController";
 import prisma from "../../config/db";
 import redis from "../../config/redis";
+import getRedis from "../../config/redis";
 
 jest.mock("../../config/redis", () => ({
   get: jest.fn().mockResolvedValue(null),
@@ -60,6 +61,8 @@ describe("seasonsController.getSeasons", () => {
 
   it("returns cached data if available", async () => {
     const cachedData = JSON.stringify([{ season: 2022, team: "Red Bull" }]);
+
+    const redis = getRedis();
     (redis.get as jest.Mock).mockResolvedValueOnce(cachedData);
 
     const req = {} as any;

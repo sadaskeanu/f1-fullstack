@@ -2,6 +2,7 @@ import prisma from "../config/db";
 import redis from "../config/redis";
 import { fetchWorldChampion, mapToWorldChampion } from "./WorldChampionService";
 import { fetchRaceChampions, mapToRaceChampions } from "./RaceChampionService";
+import getRedis from "../config/redis";
 
 export async function refreshSeasonsData(): Promise<void> {
   console.log("Starting refreshSeasonsData...");
@@ -13,6 +14,7 @@ export async function refreshSeasonsData(): Promise<void> {
 
   for (const { season } of seasons) {
     try {
+      const redis = getRedis();
       console.log(`Refreshing data for season ${season}...`);
 
       const worldRaw = await fetchWorldChampion(season);
