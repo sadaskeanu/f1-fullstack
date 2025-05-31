@@ -1,12 +1,20 @@
 import { getWinners } from "../winnersController";
 import prisma from "../../config/db";
 
+const mockGet = jest.fn();
+const mockSet = jest.fn();
+
 jest.mock("../../config/redis", () => ({
-  get: jest.fn().mockResolvedValue(null),
-  set: jest.fn().mockResolvedValue("OK"),
+  __esModule: true,
+  default: () => ({
+    get: mockGet,
+    set: mockSet,
+    on: jest.fn(),
+  }),
 }));
 
 beforeEach(() => {
+  jest.clearAllMocks();
   jest.spyOn(console, "error").mockImplementation(() => {});
 });
 
@@ -41,6 +49,8 @@ describe("winnersController.getWinners", () => {
         isWorldChampion: false,
       },
     ];
+
+    mockGet.mockResolvedValueOnce(null);
     jest
       .spyOn(prisma.raceChampion, "findMany")
       .mockResolvedValue(fakeWinners as any);
@@ -56,12 +66,14 @@ describe("winnersController.getWinners", () => {
       where: { season: 2021 },
       orderBy: { race: "asc" },
     });
+    expect(mockSet).toHaveBeenCalled();
     expect(json).toHaveBeenCalledWith(fakeWinners);
     expect(next).not.toHaveBeenCalled();
   });
 
   it("forwards errors to next()", async () => {
     const error = new Error("DB failure");
+    mockGet.mockResolvedValueOnce(null); // no cache
     jest.spyOn(prisma.raceChampion, "findMany").mockRejectedValue(error);
 
     const req = { params: { year: "2022" } } as any;
@@ -71,5 +83,32 @@ describe("winnersController.getWinners", () => {
     await getWinners(req, res, next);
 
     expect(next).toHaveBeenCalledWith(error);
+  });
+
+  it("returns cached data if available", async () => {
+    const cachedData = JSON.stringify([
+      {
+        season: 2022,
+        race: "Cached GP",
+        driverId: "cached",
+        driverName: "Cache",
+        driverFamilyName: "Driver",
+        team: "CacheTeam",
+        isWorldChampion: false,
+      },
+    ]);
+
+    mockGet.mockResolvedValueOnce(cachedData);
+
+    const req = { params: { year: "2022" } } as any;
+    const json = jest.fn();
+    const res = { json } as any;
+    const next = jest.fn();
+
+    await getWinners(req, res, next);
+
+    expect(json).toHaveBeenCalledWith(JSON.parse(cachedData));
+    expect(mockSet).not.toHaveBeenCalled();
+    expect(next).not.toHaveBeenCalled();
   });
 });

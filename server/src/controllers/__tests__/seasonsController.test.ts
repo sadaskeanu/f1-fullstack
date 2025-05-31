@@ -1,14 +1,20 @@
 import { getSeasons } from "../seasonsController";
 import prisma from "../../config/db";
-import redis from "../../config/redis";
-import getRedis from "../../config/redis";
+
+const mockGet = jest.fn();
+const mockSet = jest.fn();
 
 jest.mock("../../config/redis", () => ({
-  get: jest.fn().mockResolvedValue(null),
-  set: jest.fn().mockResolvedValue("OK"),
+  __esModule: true,
+  default: () => ({
+    get: mockGet,
+    set: mockSet,
+    on: jest.fn(),
+  }),
 }));
 
 beforeEach(() => {
+  jest.clearAllMocks();
   jest.spyOn(console, "error").mockImplementation(() => {});
 });
 
@@ -28,6 +34,8 @@ describe("seasonsController.getSeasons", () => {
         team: "Mercedes",
       },
     ];
+
+    mockGet.mockResolvedValueOnce(null);
     jest
       .spyOn(prisma.worldChampion, "findMany")
       .mockResolvedValue(fakeSeasons as any);
@@ -42,12 +50,14 @@ describe("seasonsController.getSeasons", () => {
     expect(prisma.worldChampion.findMany).toHaveBeenCalledWith({
       orderBy: { season: "asc" },
     });
+    expect(mockSet).toHaveBeenCalled();
     expect(json).toHaveBeenCalledWith(fakeSeasons);
     expect(next).not.toHaveBeenCalled();
   });
 
   it("forwards errors to next()", async () => {
     const error = new Error("DB failure");
+    mockGet.mockResolvedValueOnce(null);
     jest.spyOn(prisma.worldChampion, "findMany").mockRejectedValue(error);
 
     const req = {} as any;
@@ -62,8 +72,7 @@ describe("seasonsController.getSeasons", () => {
   it("returns cached data if available", async () => {
     const cachedData = JSON.stringify([{ season: 2022, team: "Red Bull" }]);
 
-    const redis = getRedis();
-    (redis.get as jest.Mock).mockResolvedValueOnce(cachedData);
+    mockGet.mockResolvedValueOnce(cachedData);
 
     const req = {} as any;
     const json = jest.fn();
@@ -73,5 +82,7 @@ describe("seasonsController.getSeasons", () => {
     await getSeasons(req, res, next);
 
     expect(json).toHaveBeenCalledWith(JSON.parse(cachedData));
+    expect(mockSet).not.toHaveBeenCalled();
+    expect(next).not.toHaveBeenCalled();
   });
 });
