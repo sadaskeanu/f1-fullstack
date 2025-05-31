@@ -40,7 +40,6 @@ services:
       ERGAST_API_BASE: https://api.jolpi.ca/ergast/
       REDIS_HOST: redis
       DATABASE_URL: postgres://neondb_owner:npg_yT2IqecvrF9z@postgres:5432/neondb
-
     ports:
       - "4000:4000"
     depends_on:
@@ -60,5 +59,20 @@ services:
     depends_on:
       - backend
 
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: pgadmin
+    restart: always
+    ports:
+      - "5050:80"
+    environment:
+      PGADMIN_DEFAULT_EMAIL: dariak@hexaware.com
+      PGADMIN_DEFAULT_PASSWORD: admin
+    depends_on:
+      - postgres
+    volumes:
+      - pgadmin_data:/var/lib/pgadmin
+
 volumes:
   postgres_data:
+  pgadmin_data:

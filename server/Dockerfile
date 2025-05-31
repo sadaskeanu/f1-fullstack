@@ -25,5 +25,5 @@ RUN npm run build
 # Expose the port your app runs on
 EXPOSE 4000
 
-# Run the data seeding script before starting the backend server
-CMD npm run upsert:all && npm start
+# Run migration, data seeding, and start the backend server
+CMD npx prisma db push && npm run upsert:all && npm start
