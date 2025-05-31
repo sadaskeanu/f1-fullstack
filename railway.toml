@@ -3,10 +3,16 @@ name = "my-fullstack-app"
 
 [services.client]
 source = "client"
-dockerfile = "client/Dockerfile"
-start = { cmd = null, port = 80 }
+dockerfilePath = "client/Dockerfile"
+
+  [services.client.start]
+  cmd = ""
+  port = 80
 
 [services.server]
 source = "server"
-dockerfile = "server/Dockerfile"
-start = { cmd = null, port = 4000 }
+dockerfilePath = "server/Dockerfile"
+
+  [services.server.start]
+  cmd = ""
+  port = 4000
