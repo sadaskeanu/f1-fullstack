@@ -1,29 +1,25 @@
-# Stage 1: Build the application
 FROM node:18-alpine
 
-# Set the working directory
 WORKDIR /app
 
-# Copy the package.json and package-lock.json files
 COPY package.json package-lock.json ./
-
-# Copy Prisma schema 
 COPY prisma ./prisma
+
+# Allow skipping Prisma generation via build arg
+ARG SKIP_PRISMA_GENERATE=false
 
 # Install dependencies
 RUN npm install
 
-# Copy the entire project
 COPY . .
 
-# Generate Prisma client & build TS
-RUN npm run prisma:generate
+# Conditionally generate Prisma client
+RUN if [ "$SKIP_PRISMA_GENERATE" != "true" ]; then npm run prisma:generate; fi
 
-# Build the server app 
+# Build TypeScript
 RUN npm run build
 
-# Expose the port your app runs on
 EXPOSE 4000
 
-# Run migration, data seeding, and start the backend server
-CMD npx prisma db push && npm run upsert:all && npm start
+# At container startup: always run full setup
+CMD npx prisma generate && npx prisma db push && npm run upsert:all && npm start
