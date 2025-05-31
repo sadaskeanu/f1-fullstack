@@ -96,8 +96,8 @@ jobs:
           cache: "npm"
       - run: cd client && npm ci
       - run: cd client && npm test
-      
-    build-docker:
+
+  build-docker:
     name: Build Docker Images
     runs-on: ubuntu-latest
     steps:
