@@ -12,13 +12,15 @@ make setup-env
 
 Run:
 
-```make up
+```
+make up
 
 ```
 
 To stop everything later:
 
-```make down
+```
+make down
 
 ```
 
