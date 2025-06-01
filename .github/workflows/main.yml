@@ -198,7 +198,7 @@ jobs:
     if: github.ref == 'refs/heads/main'
     steps:
       - uses: actions/checkout@v3
-      - run: npm install -g @railway/cli
+      - run: npm install -g @railway/cli@4.5.1
       - run: railway redeploy --service ${{ secrets.RAILWAY_SERVER_SERVICE_ID }} --yes
         env:
           RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
@@ -211,7 +211,7 @@ jobs:
     if: github.ref == 'refs/heads/main'
     steps:
       - uses: actions/checkout@v3
-      - run: npm install -g @railway/cli
+      - run: npm install -g @railway/cli@4.5.1
       - run: railway redeploy --service ${{ secrets.RAILWAY_CLIENT_SERVICE_ID }} --yes
         env:
           RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
