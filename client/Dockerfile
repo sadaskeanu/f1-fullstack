@@ -4,11 +4,10 @@ FROM node:18-alpine AS builder
 WORKDIR /app
 
 COPY package.json package-lock.json ./
-RUN npm install
+RUN echo "Installing dependencies" && npm install
 
 COPY . .
-# DEBUG: show what's in the build context
-RUN echo "BEFORE BUILD" && ls -la && npm run build && echo "Build complete" && ls -la dist
+RUN echo "Running Vite build" && npm run build && echo "Build complete, contents:" && ls -la dist
 
 # Stage 2: Serve with Nginx
 FROM nginx:alpine
