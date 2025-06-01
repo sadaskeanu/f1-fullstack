@@ -12,9 +12,12 @@ RUN echo "Running Vite build" && npm run build && echo "Build complete, contents
 # Stage 2: Serve with Nginx
 FROM nginx:alpine
 
-RUN rm /etc/nginx/conf.d/default.conf
-COPY nginx.conf /etc/nginx/conf.d
+# Replace default Nginx config properly
+COPY nginx.conf /etc/nginx/conf.d/default.conf
+
+# Copy built app
 COPY --from=builder /app/dist /usr/share/nginx/html
+
 
 EXPOSE 80
 
