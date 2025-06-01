@@ -7,6 +7,7 @@ async function startServer() {
   try {
     console.log("Starting server setup...");
 
+    console.log("Scheduling refresh jobs...");
     await scheduleRefreshJobs();
     console.log("Scheduled refresh jobs");
 
