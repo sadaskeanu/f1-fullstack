@@ -7,7 +7,8 @@ COPY package.json package-lock.json ./
 RUN npm install
 
 COPY . .
-RUN npm run build && echo
+# DEBUG: show what's in the build context
+RUN echo "BEFORE BUILD" && ls -la && npm run build && echo "Build complete" && ls -la dist
 
 # Stage 2: Serve with Nginx
 FROM nginx:alpine
