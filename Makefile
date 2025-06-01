@@ -47,3 +47,9 @@ test:
 push:
 	docker push sadaskeanu/f1-backend:latest
 	docker push sadaskeanu/f1-frontend:latest
+
+
+setup-env:
+	cp .env.example .env || true
+	cp server/.env.example server/.env || true
+	cp client/.env.example client/.env || true
