@@ -202,7 +202,7 @@ jobs:
       - name: Deploy Backend
         run: |
           cd server
-          railway link --project ${{ secrets.RAILWAY_PROJECT_ID }} --service d474f46b-dc54-40a6-9865-80156d9fbde1 --token ${{ secrets.RAILWAY_TOKEN }}
+          railway link --project ${{ secrets.RAILWAY_PROJECT_ID }} --service d474f46b-dc54-40a6-9865-80156d9fbde1
           railway up --service d474f46b-dc54-40a6-9865-80156d9fbde1 --no-confirm --token ${{ secrets.RAILWAY_TOKEN }}
         env:
           RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
@@ -219,7 +219,7 @@ jobs:
       - name: Deploy Client
         run: |
           cd client
-          railway link --project ${{ secrets.RAILWAY_PROJECT_ID }} --service 8066f9e0-69c9-49f0-b5d7-8d606939626c --token ${{ secrets.RAILWAY_TOKEN }}
+          railway link --project ${{ secrets.RAILWAY_PROJECT_ID }} --service 8066f9e0-69c9-49f0-b5d7-8d606939626c
           railway up --service 8066f9e0-69c9-49f0-b5d7-8d606939626c --no-confirm --token ${{ secrets.RAILWAY_TOKEN }}
 
         env:
