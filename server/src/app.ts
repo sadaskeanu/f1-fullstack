@@ -1,6 +1,6 @@
 import express from "express";
 import { ZodError } from "zod";
-import { Request, Response } from "express";
+import { Request, Response, NextFunction } from "express";
 import cors from "cors";
 import prisma from "./config/db";
 import seasonsRoutes from "./routes/seasonsRoutes";
@@ -44,8 +44,7 @@ app.get("/test-db", async (_req, res) => {
 
 app.use("/api/seasons", seasonsRoutes);
 app.use("/api", winnersRoutes);
-
-app.use((err: Error, req: Request, res: Response) => {
+app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
   console.error(err);
 
   const statusCode =
@@ -56,7 +55,7 @@ app.use((err: Error, req: Request, res: Response) => {
   });
 });
 
-app.use((err: unknown, req: Request, res: Response) => {
+app.use((err: unknown, req: Request, res: Response, next: NextFunction) => {
   if (err instanceof ZodError) {
     res.status(400).json({ errors: err.errors });
   }
