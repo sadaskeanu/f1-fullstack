@@ -197,14 +197,11 @@ jobs:
     needs: docker
     if: github.ref == 'refs/heads/main'
     steps:
-      - name: Install Railway CLI
-        run: npm install -g @railway/cli
-
-      - name: Set Railway Token
-        run: echo "RAILWAY_TOKEN=${{ secrets.RAILWAY_TOKEN }}" >> $GITHUB_ENV
-
-      - name: Redeploy Backend
-        run: railway redeploy --service ${{ secrets.RAILWAY_SERVER_SERVICE_ID }} --yes
+      - uses: actions/checkout@v3
+      - run: npm install -g @railway/cli
+      - run: railway redeploy --service ${{ secrets.RAILWAY_SERVER_SERVICE_ID }} --yes
+        env:
+          RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
 
   # DEPLOY CLIENT
   deploy-client:
@@ -213,11 +210,8 @@ jobs:
     needs: docker
     if: github.ref == 'refs/heads/main'
     steps:
-      - name: Install Railway CLI
-        run: npm install -g @railway/cli
-
-      - name: Set Railway Token
-        run: echo "RAILWAY_TOKEN=${{ secrets.RAILWAY_TOKEN }}" >> $GITHUB_ENV
-
-      - name: Redeploy Client
-        run: railway redeploy --service ${{ secrets.RAILWAY_CLIENT_SERVICE_ID }} --yes
+      - uses: actions/checkout@v3
+      - run: npm install -g @railway/cli
+      - run: railway redeploy --service ${{ secrets.RAILWAY_CLIENT_SERVICE_ID }} --yes
+        env:
+          RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
