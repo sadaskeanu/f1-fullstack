@@ -9,9 +9,9 @@ COMPOSE_FILE=docker-compose.yml
 
 .PHONY: up down restart logs build prune lint test push
 
-## Start all containers
+## Start all containers with build
 up:
-	$(COMPOSE) up -d
+	$(COMPOSE) up --build
 
 ## Stop all containers
 down:

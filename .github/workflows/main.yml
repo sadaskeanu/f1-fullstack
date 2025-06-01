@@ -190,29 +190,29 @@ jobs:
         env:
           SNYK_TOKEN: b9898c46-f1dd-407b-be7c-2661c0f387e1
 
-  # DEPLOY SERVER
-  deploy-backend:
-    name: Deploy Backend to Railway
-    runs-on: ubuntu-latest
-    needs: docker
-    container: ghcr.io/railwayapp/cli:latest
-    env:
-      SVC_ID: ${{ secrets.RAILWAY_SERVER_SERVICE_ID }}
-      RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
-    steps:
-      - uses: actions/checkout@v3
-      - run: railway up --service=$SVC_ID
+  # # DEPLOY SERVER
+  # deploy-backend:
+  #   name: Deploy Backend to Railway
+  #   runs-on: ubuntu-latest
+  #   needs: docker
+  #   container: ghcr.io/railwayapp/cli:latest
+  #   env:
+  #     SVC_ID: ${{ secrets.RAILWAY_SERVER_SERVICE_ID }}
+  #     RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
+  #   steps:
+  #     - uses: actions/checkout@v3
+  #     - run: railway up --service=$SVC_ID
 
-  # DEPLOY CLIENT
-  deploy-client:
-    name: Deploy Client to Railway
-    runs-on: ubuntu-latest
-    needs: docker
-    if: github.ref == 'refs/heads/main'
-    container: ghcr.io/railwayapp/cli:latest
-    env:
-      SVC_ID: ${{ secrets.RAILWAY_CLIENT_SERVICE_ID }}
-      RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
-    steps:
-      - uses: actions/checkout@v3
-      - run: railway up --service=$SVC_ID
+  # # DEPLOY CLIENT
+  # deploy-client:
+  #   name: Deploy Client to Railway
+  #   runs-on: ubuntu-latest
+  #   needs: docker
+  #   if: github.ref == 'refs/heads/main'
+  #   container: ghcr.io/railwayapp/cli:latest
+  #   env:
+  #     SVC_ID: ${{ secrets.RAILWAY_CLIENT_SERVICE_ID }}
+  #     RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
+  #   steps:
+  #     - uses: actions/checkout@v3
+  #     - run: railway up --service=$SVC_ID
