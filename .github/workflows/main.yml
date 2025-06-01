@@ -201,7 +201,7 @@ jobs:
         run: npm install -g @railway/cli
       - name: Redeploy Backend
         env:
-        RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
+          RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
         run: railway redeploy --service ${{ secrets.RAILWAY_SERVER_SERVICE_ID }} --yes
 
   # DEPLOY CLIENT
@@ -215,5 +215,5 @@ jobs:
         run: npm install -g @railway/cli
       - name: Redeploy Client
         env:
-        RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
+          RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
         run: railway redeploy --service ${{ secrets.RAILWAY_CLIENT_SERVICE_ID }} --yes
