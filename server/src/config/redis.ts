@@ -4,8 +4,8 @@ let redis: Redis;
 
 export default function getRedis(): Redis {
   if (!redis) {
-    const url = process.env.REDIS_PUBLIC_URL + "?family=0";
-    console.log("REDIS_URL:", process.env.REDIS_PUBLIC_URL);
+    const url = process.env.REDIS_URL + "?family=0";
+    console.log("REDIS_URL:", process.env.REDIS_URL);
     if (url) {
       redis = new Redis(url);
     } else {
