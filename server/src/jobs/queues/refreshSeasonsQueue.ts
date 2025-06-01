@@ -5,6 +5,8 @@ export const refreshSeasonsQueue = new Queue("refresh-seasons", {
   redis: {
     host: process.env.REDIS_HOST || "localhost",
     port: 6379,
+    password: process.env.REDIS_PASSWORD,
+    family: 0,
   },
 });
 
