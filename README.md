@@ -38,5 +38,5 @@ Service URL Description:
 
 Use these credentials to log in:
 
-Email: dariak@hexaware.com
-Password: admin
+Email: admin@admin.com
+Password: admin123
