@@ -2,7 +2,7 @@
   "$schema": "https://railway.com/railway.schema.json",
   "build": {
     "builder": "DOCKERFILE",
-    "watchPatterns": ["/server/Docker"],
+    "watchPatterns": ["/server/Docker", "server/**"],
     "dockerfilePath": "server/Dockerfile"
   },
   "deploy": {
