@@ -10,7 +10,7 @@ async function startServer() {
 
     console.log("Scheduling refresh jobs...");
     await scheduleRefreshJobs();
-    console.log("Scheduled refresh jobs");
+    console.log("Scheduled refresh jobs!");
 
     app.listen(port, () => {
       console.log(`

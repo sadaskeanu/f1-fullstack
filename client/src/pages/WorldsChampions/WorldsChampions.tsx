@@ -15,6 +15,8 @@ export default function WorldsChampions() {
     null
   );
 
+  console.log("worldChampions:", worldChampions);
+
   useEffect(() => {
     const cacheKey = "worldChampions";
     const ttlKey = "worldChampionsTTL";
