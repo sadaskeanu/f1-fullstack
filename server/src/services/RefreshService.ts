@@ -1,7 +1,8 @@
 import prisma from "../config/db";
-import redis from "../config/redis";
 import { fetchWorldChampion, mapToWorldChampion } from "./WorldChampionService";
 import { fetchRaceChampions, mapToRaceChampions } from "./RaceChampionService";
+import { delay } from "../utils/delay";
+import { retry } from "../utils/retry";
 import getRedis from "../config/redis";
 
 export async function refreshSeasonsData(): Promise<void> {
@@ -12,15 +13,25 @@ export async function refreshSeasonsData(): Promise<void> {
     orderBy: { season: "asc" },
   });
 
-  for (const { season } of seasons) {
-    try {
-      const redis = getRedis();
-      console.log(`Refreshing data for season ${season}...`);
+  let baseDelay = 500;
 
-      const worldRaw = await fetchWorldChampion(season);
+  for (const { season } of seasons) {
+    const redis = getRedis();
+    console.log(`Refreshing data for season ${season}...`);
+
+    try {
+      const worldRaw = await retry(
+        () => fetchWorldChampion(season),
+        3,
+        baseDelay
+      );
       const world = mapToWorldChampion(worldRaw);
 
-      const raceRaw = await fetchRaceChampions(season);
+      const raceRaw = await retry(
+        () => fetchRaceChampions(season),
+        3,
+        baseDelay
+      );
       const race = mapToRaceChampions(raceRaw, world.driverId);
 
       await prisma.worldChampion.upsert({
@@ -35,10 +46,14 @@ export async function refreshSeasonsData(): Promise<void> {
       await redis.del("seasons");
       await redis.del(`winners:${season}`);
 
-      console.log(`Refreshed season ${season}`);
-    } catch (err) {
-      console.error(`Failed to refresh season ${season}:`, err);
+      console.log(`✅ Refreshed season ${season}`);
+      baseDelay = 500;
+    } catch (err: any) {
+      console.error(`❌ Failed to refresh season ${season}: ${err.message}`);
+      baseDelay *= 2;
     }
+
+    await delay(baseDelay);
   }
 
   console.log("Finished refreshSeasonsData");

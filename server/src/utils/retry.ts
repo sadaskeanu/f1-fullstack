@@ -2,7 +2,7 @@ import { delay } from "./delay";
 
 export async function retry<T>(
   fn: () => Promise<T>,
-  maxRetries = 3,
+  maxRetries = 10,
   baseDelay = 2000
 ): Promise<T> {
   let attempt = 0;
@@ -16,7 +16,7 @@ export async function retry<T>(
         err.message.includes("Too Many Requests");
 
       if (isRateLimit && attempt < maxRetries) {
-        const wait = baseDelay * attempt;
+        const wait = Math.min(baseDelay * attempt, 5000);
         console.log(`Rate limited, retrying in ${wait}ms...`);
         await delay(wait);
         continue;

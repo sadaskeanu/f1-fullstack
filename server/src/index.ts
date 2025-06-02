@@ -1,5 +1,6 @@
 import { app } from "./app";
 import { scheduleRefreshJobs } from "./jobs/scheduleRefreshJobs";
+import "./processors/refreshSeasonsProcessor";
 
 const port = process.env.PORT ?? 4000;
 
