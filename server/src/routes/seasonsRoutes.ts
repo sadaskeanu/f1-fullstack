@@ -26,7 +26,8 @@
 
 import { Router } from "express";
 import { getSeasons } from "../controllers/seasonsController";
+import { rateLimiter } from "../middleware/rateLimiter";
 
 const router = Router();
-router.get("/", getSeasons);
+router.get("/", rateLimiter, getSeasons);
 export default router;

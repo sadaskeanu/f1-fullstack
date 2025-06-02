@@ -38,7 +38,13 @@ import { Router } from "express";
 import { getWinners } from "../controllers/winnersController";
 import { validate } from "../middleware/validate";
 import { yearParamSchema } from "../validation/paramSchemas";
+import { rateLimiter } from "../middleware/rateLimiter";
 
 const router = Router();
-router.get("/:year/winners", validate(yearParamSchema, "params"), getWinners);
+router.get(
+  "/:year/winners",
+  rateLimiter,
+  validate(yearParamSchema, "params"),
+  getWinners
+);
 export default router;
