@@ -2,6 +2,7 @@ import express from "express";
 import { ZodError } from "zod";
 import { Request, Response, NextFunction } from "express";
 import cors from "cors";
+import helmet from "helmet";
 import prisma from "./config/db";
 import seasonsRoutes from "./routes/seasonsRoutes";
 import winnersRoutes from "./routes/winnersRoutes";
@@ -14,8 +15,11 @@ import { refreshSeasonsQueue } from "./jobs/queues/refreshSeasonsQueue";
 
 export const app = express();
 
+app.enable("trust proxy");
+
 app.use(cors());
 app.use(express.json());
+app.use(helmet());
 
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 console.log("Swagger Spec loaded:", JSON.stringify(swaggerSpec, null, 2));
