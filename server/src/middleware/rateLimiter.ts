@@ -1,4 +1,5 @@
 import { Request, Response, NextFunction } from "express";
+import { RATE_LIMIT } from "../constants/constants";
 
 const requestCounts = new Map<string, number[]>();
 
@@ -9,14 +10,11 @@ export const rateLimiter = (
 ) => {
   const ip = req.ip || "unknown";
   const now = Date.now();
-  const windowMs = 15 * 60 * 1000;
-  const maxRequests = 100;
 
   const timestamps = requestCounts.get(ip) || [];
+  const recent = timestamps.filter((ts) => now - ts < RATE_LIMIT.WINDOW_MS);
 
-  const recent = timestamps.filter((ts) => now - ts < windowMs);
-
-  if (recent.length >= maxRequests) {
+  if (recent.length >= RATE_LIMIT.MAX_REQUESTS) {
     res
       .status(429)
       .json({ message: "Too many requests, please try again later." });

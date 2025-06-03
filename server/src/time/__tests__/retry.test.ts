@@ -2,7 +2,7 @@ import { retry } from "../retry";
 import { delay } from "../delay";
 
 jest.mock("../delay", () => ({
-  delay: jest.fn(() => Promise.resolve()), // instantly resolves delay
+  delay: jest.fn(() => Promise.resolve()),
 }));
 
 describe("retry()", () => {
@@ -30,18 +30,40 @@ describe("retry()", () => {
     expect(delay).toHaveBeenCalledWith(1000);
   });
 
-  it("does not retry on non-rate-limit error", async () => {
-    const fn = jest.fn().mockRejectedValue(new Error("Database error"));
+  it("retries on non-429 error and eventually succeeds", async () => {
+    const fn = jest
+      .fn()
+      .mockRejectedValueOnce(new Error("Some error"))
+      .mockResolvedValueOnce("Recovered");
 
-    await expect(retry(fn)).rejects.toThrow("Database error");
-    expect(fn).toHaveBeenCalledTimes(1);
+    const result = await retry(fn, 3, 1000);
+
+    expect(result).toBe("Recovered");
+    expect(fn).toHaveBeenCalledTimes(2);
+    expect(delay).toHaveBeenCalledWith(500);
   });
 
-  it("fails after max retries if rate-limited every time", async () => {
-    const fn = jest.fn().mockRejectedValue(new Error("429 Too Many Requests"));
+  it("retries on generic error and fails after max retries", async () => {
+    const fn = jest.fn().mockRejectedValue(new Error("Boom"));
 
-    await expect(retry(fn, 3, 1000)).rejects.toThrow("Failed after 3 retries.");
+    await expect(retry(fn, 3, 1000)).rejects.toThrow(
+      "Failed after 3 retries. Last error: Boom"
+    );
     expect(fn).toHaveBeenCalledTimes(3);
-    expect(delay).toHaveBeenCalledTimes(2); // no delay on last failed attempt
+    expect(delay).toHaveBeenCalledTimes(2);
+  });
+
+  it("limits delay for rate-limited errors", async () => {
+    const fn = jest
+      .fn()
+      .mockRejectedValueOnce(new Error("429 Too Many Requests"))
+      .mockRejectedValueOnce(new Error("429 Too Many Requests"))
+      .mockResolvedValue("Done");
+
+    await retry(fn, 5, 3000);
+
+    expect(fn).toHaveBeenCalledTimes(3);
+    expect(delay).toHaveBeenNthCalledWith(1, 3000);
+    expect(delay).toHaveBeenNthCalledWith(2, 5000);
   });
 });

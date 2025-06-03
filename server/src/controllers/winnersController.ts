@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import prisma from "../config/db";
-import redis from "../config/redis";
 import getRedis from "../config/redis";
+import { SECONDS, CACHE_KEYS } from "../constants/constants";
 
 export async function getWinners(
   req: Request,
@@ -14,7 +14,7 @@ export async function getWinners(
     return;
   }
 
-  const cacheKey = `winners:${year}`;
+  const cacheKey = `${CACHE_KEYS.WINNERS_PREFIX}${year}`;
 
   try {
     const redis = getRedis();
@@ -32,8 +32,7 @@ export async function getWinners(
       orderBy: { race: "asc" },
     });
 
-    const oneWeekInSeconds = 60 * 60 * 24 * 7;
-    await redis.set(cacheKey, JSON.stringify(winners), "EX", oneWeekInSeconds);
+    await redis.set(cacheKey, JSON.stringify(winners), "EX", SECONDS.ONE_WEEK);
 
     res.json(winners);
   } catch (err) {

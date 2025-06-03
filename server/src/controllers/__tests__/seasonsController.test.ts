@@ -1,5 +1,6 @@
 import { getSeasons } from "../seasonsController";
 import prisma from "../../config/db";
+import type { Request, Response, NextFunction } from "express";
 
 const mockGet = jest.fn();
 const mockSet = jest.fn();
@@ -26,6 +27,7 @@ describe("seasonsController.getSeasons", () => {
   it("responds with a list of seasons on success", async () => {
     const fakeSeasons = [
       {
+        id: 15,
         season: 2020,
         driverId: "hamilton",
         name: "Lewis",
@@ -36,16 +38,14 @@ describe("seasonsController.getSeasons", () => {
     ];
 
     mockGet.mockResolvedValueOnce(null);
-    jest
-      .spyOn(prisma.worldChampion, "findMany")
-      .mockResolvedValue(fakeSeasons as any);
+    jest.spyOn(prisma.worldChampion, "findMany").mockResolvedValue(fakeSeasons);
 
-    const req = {} as any;
+    const req = {} as Request;
     const json = jest.fn();
-    const res = { json } as any;
-    const next = jest.fn();
+    const res = { json } as Partial<Response>;
+    const next = jest.fn() as NextFunction;
 
-    await getSeasons(req, res, next);
+    await getSeasons(req, res as Response, next);
 
     expect(prisma.worldChampion.findMany).toHaveBeenCalledWith({
       orderBy: { season: "asc" },
@@ -60,11 +60,11 @@ describe("seasonsController.getSeasons", () => {
     mockGet.mockResolvedValueOnce(null);
     jest.spyOn(prisma.worldChampion, "findMany").mockRejectedValue(error);
 
-    const req = {} as any;
-    const res = {} as any;
-    const next = jest.fn();
+    const req = {} as Request;
+    const res = {} as Partial<Response>;
+    const next = jest.fn() as NextFunction;
 
-    await getSeasons(req, res, next);
+    await getSeasons(req, res as Response, next);
 
     expect(next).toHaveBeenCalledWith(error);
   });
@@ -74,12 +74,12 @@ describe("seasonsController.getSeasons", () => {
 
     mockGet.mockResolvedValueOnce(cachedData);
 
-    const req = {} as any;
+    const req = {} as Request;
     const json = jest.fn();
-    const res = { json } as any;
-    const next = jest.fn();
+    const res = { json } as Partial<Response>;
+    const next = jest.fn() as NextFunction;
 
-    await getSeasons(req, res, next);
+    await getSeasons(req, res as Response, next);
 
     expect(json).toHaveBeenCalledWith(JSON.parse(cachedData));
     expect(mockSet).not.toHaveBeenCalled();

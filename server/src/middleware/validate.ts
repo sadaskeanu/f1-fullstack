@@ -1,22 +1,21 @@
 import { ZodSchema, ZodError } from "zod";
-import { RequestHandler } from "express";
+import { Request, Response, NextFunction, RequestHandler } from "express";
 
 export function validate<T>(
   schema: ZodSchema<T>,
   target: "params" | "query" | "body" = "body"
 ): RequestHandler {
-  return (req, res, next) => {
+  return (req: Request, res: Response, next: NextFunction): void => {
     try {
       const parsed = schema.parse(req[target]);
-      req[target] = parsed as any;
+      (req as Request)[target] = parsed;
       next();
-      return;
     } catch (err) {
       if (err instanceof ZodError) {
         res.status(400).json({ errors: err.errors });
-        return;
+      } else {
+        next(err);
       }
-      next(err as any);
     }
   };
 }

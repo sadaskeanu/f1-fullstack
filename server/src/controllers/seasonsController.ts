@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import prisma from "../config/db";
 import getRedis from "../config/redis";
+import { SECONDS, CACHE_KEYS } from "../constants/constants";
 
 export async function getSeasons(
   req: Request,
@@ -9,7 +10,7 @@ export async function getSeasons(
 ) {
   try {
     const redis = getRedis();
-    const cached = await redis.get("seasons");
+    const cached = await redis.get(CACHE_KEYS.SEASONS);
     if (cached) {
       res.json(JSON.parse(cached));
       return;
@@ -19,9 +20,12 @@ export async function getSeasons(
       orderBy: { season: "asc" },
     });
 
-    const oneWeekInSeconds = 60 * 60 * 24 * 7;
-
-    await redis.set("seasons", JSON.stringify(seasons), "EX", oneWeekInSeconds);
+    await redis.set(
+      CACHE_KEYS.SEASONS,
+      JSON.stringify(seasons),
+      "EX",
+      SECONDS.ONE_WEEK
+    );
 
     res.json(seasons);
   } catch (err) {

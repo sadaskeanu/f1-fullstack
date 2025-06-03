@@ -13,7 +13,7 @@ describe("errorHandler middleware", () => {
     app = express();
     app.use(express.json());
 
-    app.get("/error", (_req, _res) => {
+    app.get("/error", () => {
       throw new Error("Something went wrong");
     });
 

@@ -1,5 +1,5 @@
 import express from "express";
-import { Request, Response, NextFunction } from "express";
+import { Request, Response } from "express";
 import cors from "cors";
 import helmet from "helmet";
 import prisma from "./config/db";

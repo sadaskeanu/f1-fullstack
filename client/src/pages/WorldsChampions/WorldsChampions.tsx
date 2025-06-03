@@ -1,4 +1,3 @@
-import { useState, useEffect } from "react";
 import { getWorldChampions } from "../../api/api";
 import type { WorldChampion } from "../../types/WorldChampionData";
 import Heading from "../../components/Heading/Heading";
@@ -7,49 +6,18 @@ import Link from "../../components/Link/Link";
 import Loader from "../../components/Loader/Loader";
 import Error from "../../components/Error/Error";
 import Card from "../../components/Card/Card";
+import { useCachedData } from "../../hooks/useCachedData";
 
 export default function WorldsChampions() {
-  const [isLoading, setIsLoading] = useState(false);
-  const [errorMessage, setErrorMessage] = useState<string | null>(null);
-  const [worldChampions, setWorldChampions] = useState<WorldChampion[] | null>(
-    null
-  );
-
-  console.log("worldChampions:", worldChampions);
-
-  useEffect(() => {
-    const cacheKey = "worldChampions";
-    const ttlKey = "worldChampionsTTL";
-    const now = Date.now();
-    const oneDayInMs = 24 * 60 * 60 * 1000;
-
-    const cached = localStorage.getItem(cacheKey);
-    const ttl = localStorage.getItem(ttlKey);
-
-    if (cached && ttl && now < Number(ttl)) {
-      setWorldChampions(JSON.parse(cached));
-      return;
-    }
-
-    setIsLoading(true);
-
-    getWorldChampions()
-      .then((data) => {
-        setWorldChampions(data);
-        localStorage.setItem(cacheKey, JSON.stringify(data));
-        localStorage.setItem(ttlKey, String(now + oneDayInMs));
-      })
-      .catch((err) => {
-        setErrorMessage(err?.message || "Failed to load world champions.");
-      })
-      .finally(() => {
-        setIsLoading(false);
-      });
-  }, []);
+  const {
+    data: worldChampions,
+    isLoading,
+    errorMessage,
+  } = useCachedData<WorldChampion[]>("worldChampions", getWorldChampions);
 
   if (errorMessage) return <Error message={errorMessage} />;
-
   if (!worldChampions || isLoading) return <Loader />;
+
   return (
     <>
       <Heading level={1}>F1 WORLD CHAMPIONS</Heading>

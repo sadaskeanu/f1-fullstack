@@ -1,5 +1,6 @@
 import { getWinners } from "../winnersController";
 import prisma from "../../config/db";
+import type { Request, Response, NextFunction } from "express";
 
 const mockGet = jest.fn();
 const mockSet = jest.fn();
@@ -24,13 +25,13 @@ describe("winnersController.getWinners", () => {
   });
 
   it("returns 400 if year param is not a number", async () => {
-    const req = { params: { year: "not-a-number" } } as any;
+    const req = { params: { year: "not-a-number" } } as unknown as Request;
     const json = jest.fn();
     const status = jest.fn().mockReturnThis();
-    const res = { status, json } as any;
-    const next = jest.fn();
+    const res = { status, json } as Partial<Response>;
+    const next = jest.fn() as NextFunction;
 
-    await getWinners(req, res, next);
+    await getWinners(req, res as Response, next);
 
     expect(status).toHaveBeenCalledWith(400);
     expect(json).toHaveBeenCalledWith({ error: "Invalid year parameter" });
@@ -40,6 +41,7 @@ describe("winnersController.getWinners", () => {
   it("responds with race winners on success", async () => {
     const fakeWinners = [
       {
+        id: 16,
         season: 2021,
         race: "Test GP",
         driverId: "test-driver",
@@ -51,16 +53,14 @@ describe("winnersController.getWinners", () => {
     ];
 
     mockGet.mockResolvedValueOnce(null);
-    jest
-      .spyOn(prisma.raceChampion, "findMany")
-      .mockResolvedValue(fakeWinners as any);
+    jest.spyOn(prisma.raceChampion, "findMany").mockResolvedValue(fakeWinners);
 
-    const req = { params: { year: "2021" } } as any;
+    const req = { params: { year: "2021" } } as unknown as Request;
     const json = jest.fn();
-    const res = { json } as any;
-    const next = jest.fn();
+    const res = { json } as Partial<Response>;
+    const next = jest.fn() as NextFunction;
 
-    await getWinners(req, res, next);
+    await getWinners(req, res as Response, next);
 
     expect(prisma.raceChampion.findMany).toHaveBeenCalledWith({
       where: { season: 2021 },
@@ -73,14 +73,14 @@ describe("winnersController.getWinners", () => {
 
   it("forwards errors to next()", async () => {
     const error = new Error("DB failure");
-    mockGet.mockResolvedValueOnce(null); // no cache
+    mockGet.mockResolvedValueOnce(null);
     jest.spyOn(prisma.raceChampion, "findMany").mockRejectedValue(error);
 
-    const req = { params: { year: "2022" } } as any;
-    const res = {} as any;
-    const next = jest.fn();
+    const req = { params: { year: "2022" } } as unknown as Request;
+    const res = {} as Partial<Response>;
+    const next = jest.fn() as NextFunction;
 
-    await getWinners(req, res, next);
+    await getWinners(req, res as Response, next);
 
     expect(next).toHaveBeenCalledWith(error);
   });
@@ -100,12 +100,12 @@ describe("winnersController.getWinners", () => {
 
     mockGet.mockResolvedValueOnce(cachedData);
 
-    const req = { params: { year: "2022" } } as any;
+    const req = { params: { year: "2022" } } as unknown as Request;
     const json = jest.fn();
-    const res = { json } as any;
-    const next = jest.fn();
+    const res = { json } as Partial<Response>;
+    const next = jest.fn() as NextFunction;
 
-    await getWinners(req, res, next);
+    await getWinners(req, res as Response, next);
 
     expect(json).toHaveBeenCalledWith(JSON.parse(cachedData));
     expect(mockSet).not.toHaveBeenCalled();

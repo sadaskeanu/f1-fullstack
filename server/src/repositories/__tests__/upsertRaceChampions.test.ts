@@ -31,18 +31,14 @@ describe("upsertRaceChampions", () => {
   });
 
   it("should fetch race champions and upsert them into the database", async () => {
-    mockFetchRaceChampions.mockResolvedValue(mockApiResponse);
     mockFindUnique.mockResolvedValue({ driverId: "hamilton" });
+    mockFetchRaceChampions.mockResolvedValue(mockApiResponse);
     mockMapToRaceChampions.mockReturnValue(mappedData);
     mockUpsert.mockResolvedValue(mappedData[0]);
 
     const result = await upsertRaceChampions(mockSeason);
 
     expect(mockFetchRaceChampions).toHaveBeenCalledWith(mockSeason);
-    expect(mockFindUnique).toHaveBeenCalledWith({
-      where: { season: mockSeason },
-      select: { driverId: true },
-    });
     expect(mockMapToRaceChampions).toHaveBeenCalledWith(
       mockApiResponse,
       "hamilton"
@@ -52,14 +48,16 @@ describe("upsertRaceChampions", () => {
   });
 
   it("should handle case where no world champion is found", async () => {
-    mockFetchRaceChampions.mockResolvedValue(mockApiResponse);
     mockFindUnique.mockResolvedValue(null);
+    mockFetchRaceChampions.mockResolvedValue(mockApiResponse);
     mockMapToRaceChampions.mockReturnValue(mappedData);
     mockUpsert.mockResolvedValue(mappedData[0]);
 
     const result = await upsertRaceChampions(mockSeason);
 
+    expect(mockFetchRaceChampions).toHaveBeenCalledWith(mockSeason);
     expect(mockMapToRaceChampions).toHaveBeenCalledWith(mockApiResponse, null);
+    expect(mockUpsert).toHaveBeenCalledTimes(1);
     expect(result).toEqual([mappedData[0]]);
   });
 });

@@ -1,4 +1,5 @@
 import { refreshSeasonsQueue } from "./queues/refreshSeasonsQueue";
+import { SCHEDULING } from "../constants/constants";
 
 export async function scheduleRefreshJobs() {
   console.log("Waiting for Redis queue to be ready...");
@@ -6,13 +7,20 @@ export async function scheduleRefreshJobs() {
   console.log("Redis queue is ready");
 
   let retry = 0;
-  while (retry < 3) {
+  while (retry < SCHEDULING.MAX_SCHEDULE_RETRIES) {
     try {
       const jobs = await refreshSeasonsQueue.getRepeatableJobs();
-      const alreadyScheduled = jobs.find((j) => j.cron === "0 0 * * 0");
+      const alreadyScheduled = jobs.find(
+        (j) => j.cron === SCHEDULING.WEEKLY_REFRESH_CRON
+      );
 
       if (!alreadyScheduled) {
-        await refreshSeasonsQueue.add({}, { repeat: { cron: "0 0 * * 0" } });
+        await refreshSeasonsQueue.add(
+          {},
+          {
+            repeat: { cron: SCHEDULING.WEEKLY_REFRESH_CRON },
+          }
+        );
         console.log("✅ Scheduled weekly refresh job");
       } else {
         console.log("ℹ️ Weekly refresh job already scheduled");
@@ -21,8 +29,13 @@ export async function scheduleRefreshJobs() {
       break;
     } catch (err) {
       retry++;
-      console.error(`❌ Failed to schedule job. Retry ${retry}/3`, err);
-      await new Promise((res) => setTimeout(res, 1000));
+      console.error(
+        `❌ Failed to schedule job. Retry ${retry}/${SCHEDULING.MAX_SCHEDULE_RETRIES}`,
+        err
+      );
+      await new Promise((res) =>
+        setTimeout(res, SCHEDULING.SCHEDULE_RETRY_DELAY_MS)
+      );
     }
   }
 }

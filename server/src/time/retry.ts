@@ -11,22 +11,25 @@ export async function retry<T>(
       return await fn();
     } catch (err: any) {
       attempt++;
+
       const isRateLimit =
-        err.message.includes("429") ||
-        err.message.includes("Too Many Requests");
+        err.message?.includes("429") ||
+        err.message?.includes("Too Many Requests");
 
-      if (isRateLimit && attempt < maxRetries) {
-        const wait = Math.min(baseDelay * attempt, 5000);
-        console.log(`Rate limited, retrying in ${wait}ms...`);
+      const isLastAttempt = attempt === maxRetries;
+
+      const wait = isRateLimit ? Math.min(baseDelay * attempt, 5000) : 500;
+
+      if (!isLastAttempt) {
+        console.warn(
+          `⚠️ Failed fetch — retrying (attempt ${attempt}/${maxRetries}) in ${wait}ms: ${err.message}`
+        );
         await delay(wait);
-        continue;
+      } else {
+        throw new Error(
+          `Failed after ${maxRetries} retries. Last error: ${err.message}`
+        );
       }
-
-      if (isRateLimit && attempt === maxRetries) {
-        throw new Error(`Failed after ${maxRetries} retries.`);
-      }
-
-      throw err;
     }
   }
 
