@@ -20,8 +20,8 @@ jest.mock("../../config/db", () => ({
 jest.mock("../../config/redis");
 jest.mock("../WorldChampionService");
 jest.mock("../RaceChampionService");
-jest.mock("../../utils/retry");
-jest.mock("../../utils/delay");
+jest.mock("../../time/retry");
+jest.mock("../../time/delay");
 
 describe("refreshSeasonsData", () => {
   const mockRedis = {
