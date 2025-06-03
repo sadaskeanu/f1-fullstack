@@ -12,6 +12,7 @@ import { ExpressAdapter } from "@bull-board/express";
 import { createBullBoard } from "@bull-board/api";
 import { BullAdapter } from "@bull-board/api/bullAdapter";
 import { refreshSeasonsQueue } from "./jobs/queues/refreshSeasonsQueue";
+import { logger } from "./middleware/logger";
 
 export const app = express();
 
@@ -19,6 +20,7 @@ app.enable("trust proxy");
 
 app.use(cors());
 app.use(express.json());
+app.use(logger);
 app.use(helmet());
 
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
@@ -34,7 +36,7 @@ createBullBoard({
 
 app.use("/admin/queues", serverAdapter.getRouter());
 
-app.get("/test-db", async (_req, res) => {
+app.get("/test-db", async (_req: Request, res: Response) => {
   try {
     const [{ now }] = await prisma.$queryRaw<
       { now: Date }[]
