@@ -1,8 +1,8 @@
 import { runUpsertAll } from "../upsertAllChampionsAndRaces";
 import * as worldRepo from "../../repositories/worldChampionRepo";
 import * as raceRepo from "../../repositories/raceChampionRepo";
-import * as delayUtils from "../../utils/delay";
-import * as retryUtils from "../../utils/retry";
+import * as delayUtils from "../../time/delay";
+import * as retryUtils from "../../time/retry";
 
 describe("runUpsertAll", () => {
   const originalLog = console.log;

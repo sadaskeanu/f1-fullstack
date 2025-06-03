@@ -1,7 +1,7 @@
 import { upsertWorldChampion } from "../repositories/worldChampionRepo";
 import { upsertRaceChampions } from "../repositories/raceChampionRepo";
-import { delay } from "../utils/delay";
-import { retry } from "../utils/retry";
+import { delay } from "../time/delay";
+import { retry } from "../time/retry";
 
 export async function runUpsertAll() {
   const startYear = 2005;

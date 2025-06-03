@@ -1,5 +1,5 @@
 import { RaceResponse, RaceChampionData } from "../models/RaceChampionModel";
-import { fetchWithTimeout } from "../utils/fetchWithTimeout";
+import { fetchWithTimeout } from "../time/fetchWithTimeout";
 
 export async function fetchRaceChampions(
   season: number

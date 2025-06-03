@@ -2,7 +2,7 @@ import type {
   WorldChampionResponse,
   WorldChampionData,
 } from "../models/WorldChampionModel";
-import { fetchWithTimeout } from "../utils/fetchWithTimeout";
+import { fetchWithTimeout } from "../time/fetchWithTimeout";
 
 export async function fetchWorldChampion(
   season: number

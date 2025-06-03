@@ -3,8 +3,8 @@ import prisma from "../../config/db";
 import getRedis from "../../config/redis";
 import { mapToWorldChampion } from "../WorldChampionService";
 import { mapToRaceChampions } from "../RaceChampionService";
-import { retry } from "../../utils/retry";
-import { delay } from "../../utils/delay";
+import { retry } from "../../time/retry";
+import { delay } from "../../time/delay";
 
 jest.mock("../../config/db", () => ({
   worldChampion: {
