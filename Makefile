@@ -48,8 +48,17 @@ push:
 	docker push sadaskeanu/f1-backend:latest
 	docker push sadaskeanu/f1-frontend:latest
 
-
+## Cope .env.example to locale .env
 setup-env:
 	cp .env.example .env || true
 	cp server/.env.example server/.env || true
 	cp client/.env.example client/.env || true
+
+
+## Run backend tests only
+test-server:
+	cd server && npm test
+
+## Run frontend tests only
+test-client:
+	cd client && npm test
