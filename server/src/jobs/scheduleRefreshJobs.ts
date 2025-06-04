@@ -1,6 +1,14 @@
 import { refreshSeasonsQueue } from "./queues/refreshSeasonsQueue";
 import { SCHEDULING } from "../constants/constants";
 
+/**
+ * Schedules a background job to refresh season data weekly.
+ * - Ensures Redis queue is ready before scheduling.
+ * - Checks if the weekly job is already scheduled (via cron).
+ * - If not, schedules it using a repeatable cron expression.
+ * - Retries on failure up to a configured max.
+ */
+
 export async function scheduleRefreshJobs() {
   console.log("Waiting for Redis queue to be ready...");
   await refreshSeasonsQueue.isReady();

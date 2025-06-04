@@ -14,63 +14,48 @@ The design draws inspiration from retro F1 posters to give a nostalgic, race-day
 
 ## Features
 
-**World Champion List**: View all Formula 1 world champions from 2005 to the latest season.
+- **World Champion List**: View all Formula 1 world champions from 2005 to the latest season.
 
-**Race Winners by Year**: Click on a champion to explore the individual race winners for that season.
+- **Race Winners by Year**: Click on a champion to explore the individual race winners for that season.
 
-**High Performance with Redis**: Uses Redis to cache champion and race data for fast response times.
+- **High Performance with Redis**: Uses Redis to cache champion and race data for fast response times.
 
-**Automated Data Refresh**: A scheduled background job (via Bull) fetches new data weekly from the Ergast API.
+- **Automated Data Refresh**: A scheduled background job (via Bull) fetches new data weekly from the Ergast API.
 
-**Client-Side Caching**: Uses localStorage on the frontend to avoid redundant API calls and improve UX.
+- **Client-Side Caching**: Uses localStorage on the frontend to avoid redundant API calls and improve UX.
 
-**Modern Fullstack Stack**: Built with Node.js, PostgreSQL, React, Typescript, and Docker — all wired together with CI/CD.
+- **Modern Fullstack Stack**: Built with Node.js, PostgreSQL, React, Typescript, and Docker — all wired together with CI/CD.
 
-**Deployed to the Cloud**: Hosted on Railway
+- **Deployed to the Cloud**: Hosted on Railway
 
 ## Technologies Used
 
 🛠️ **Backend**
 
-**Runtime & Framework**: Node.js with Express
-
-**Database**: PostgreSQL, accessed via Prisma ORM
-
-**Language**: TypeScript
-
-**Caching**: Redis (hosted on Railway)
-
-**Job Queue**: Bull for background tasks, with bull-board for job monitoring
-
-**Validation**: Zod
-
-**Security**: Helmet
-
-**Testing**: Jest
-
-**API Documentation**: OpenAPI (Swagger)
+- **Runtime & Framework**: Node.js with Express
+- **Language**: TypeScript
+- **Database**: PostgreSQL (accessed via Prisma ORM)
+- **Caching**: Redis (hosted on Railway)
+- **Job Queue**: Bull for background processing with bull-board for monitoring
+- **Validation**: Zod
+- **Security**: Helmet
+- **Testing**: Jest
+- **API Documentation**: OpenAPI (Swagger)
 
 🎨 **Frontend**
 
-**Framework**: React with TypeScript
-
-**Styling**: CSS Modules
-
-**State Management**: useState (no external state library)
-
-**API Requests**: Fetch API and Axios
-
-**Testing**: Vitest + React Testing Library
+- **Framework**: React with TypeScript
+- **Styling**: CSS Modules
+- **State Management**: React’s built-in `useState` (no external state library)
+- **API Requests**: Axios
+- **Testing**: Vitest with React Testing Library
 
 ⚙️ **Dev Tools & Infrastructure**
 
-**Deployment**: Railway (backend + Redis), Railway (frontend)
-
-**CI/CD**: GitHub Actions
-
-**Job Monitoring**: bull-board for managing background jobs
-
-**API Spec**: OpenAPI for clear documentation and testing
+- **Deployment**: Railway (backend, frontend, Redis)
+- **CI/CD**: GitHub Actions (lint, test, scan, build, deploy)
+- **Vulnerability Scanning**: Trivy and Snyk
+- **Containerization**: Docker (multi-service builds and deployment)
 
 ## Setup & Installation
 
@@ -94,7 +79,7 @@ Copy .env.example files for the root, backend, and frontend using:
 make setup-env
 ```
 
-his will create:
+This will create:
 
 .env
 
@@ -159,97 +144,124 @@ Password: admin123
 
 ## Architecture
 
-The F1 Fullstack app follows a modular fullstack architecture with clear separation of concerns:
+The F1 Fullstack app follows a modular fullstack architecture with clear separation of concerns.
 
-📦 **Structure**
+### 🧠 Backend Structure
 
-client/: React frontend with TypeScript and CSS Modules
+The backend (`server/src`) is organized into dedicated folders based on responsibility:
 
-server/: Node.js backend with Express, Prisma, and TypeScript
+- **`controllers/`** – Handle incoming HTTP requests and send responses.
+- **`routes/`** – Define API routes and connect them to controllers and middleware.
+- **`middleware/`** – Custom Express middleware (e.g. logger, error handler, rate limiter, validate).
+- **`repositories/`** – Abstract data access using Prisma (e.g. upsert, fetch operations).
+- **`services/`** – Business logic like fetching and transforming external data.
+- **`processors/`** – Register background job processors (e.g. Bull job consumers).
+- **`jobs/`** – Define and schedule recurring jobs (e.g. weekly season refresh).
+- **`validation/`** – Request validation schemas using Zod.
+- **`models/`** – TypeScript types and API response models.
+- **`config/`** – App setup for Redis, database, etc.
+- **`constants/`** – Centralized constants (timeouts, rate limits, cache keys).
+- **`time/`** – Utility functions for delay, retry logic, and fetch timeouts.
+- **`scripts/`** – CLI scripts for manual or one-time tasks (e.g. batch upserts).
 
-docker-compose.yml: Defines all services for local development (frontend, backend, Redis, PostgreSQL, pgAdmin)
+#### Pros
 
-🧠 **Backend Services**
+- ✅ **Separation of concerns** – Logic is cleanly split by purpose.
+- ✅ **Testability** – Each unit (service, repo, middleware) is independently testable.
+- ✅ **Scalability** – Easy to extend with new features or API endpoints.
+- ✅ **Maintainability** – The structure is predictable and easy to navigate as the app grows.
 
-REST API built with Express
+### 🎯 Frontend Structure
 
-Data layer powered by Prisma + PostgreSQL
+The frontend (`client/src`) is structured around modular React concepts with clear organization:
 
-External data fetched from Ergast API
+- **`api/`** – Functions for communicating with the backend API (e.g. via Axios).
+- **`assets/`** – Static image files like icons and UI illustrations.
+- **`components/`** – Reusable UI components (e.g. `Card`, `Heading`, `Error`, `Link`, etc.).
+- **`constants/`** – Shared static values (e.g. durations).
+- **`hooks/`** – Custom React hooks (e.g. `useCachedData`) for shared data-fetching logic.
+- **`pages/`** – Top-level page components mapped to routes (`WorldsChampions`, `RaceChampions`).
+- **`styles/`** – Global stylesheets (`normalize.css`, `base.css`).
+- **`types/`** – Shared TypeScript type definitions for world and race champion data.
+- **`main.tsx`** – React root entry point.
 
-Redis used to cache:
+#### Pros
 
-World champion list
-
-Race winners per season
-
-Bull queue handles background jobs
-
-A scheduled job runs weekly to refresh champion and race data
-
-bull-board provides a web dashboard for job monitoring
+- ✅ **Modular design** – Encourages separation of UI, logic, and API concerns.
+- ✅ **Reusability** – Shared hooks and components reduce duplication.
+- ✅ **Scalability** – Easy to extend with new pages, components, or hooks.
+- ✅ **Clarity** – Predictable structure that aligns with best practices in modern React apps.
 
 🧪 **API Documentation & Validation**
 
-OpenAPI/Swagger documents the available routes
+- OpenAPI/Swagger documents the available routes
 
-Zod used to validate incoming data
+- Zod used to validate incoming data
 
-Helmet secures HTTP headers
+- Helmet secures HTTP headers
 
-🎯 **Frontend Logic**
+## CI/CD Pipeline
 
-Built with React + TypeScript
+This project uses a full GitHub Actions CI/CD workflow to automate the development and deployment lifecycle for both the backend and frontend.
 
-Uses Fetch API and Axios for API requests
+### Key Features
 
-Manages state via useState hooks
+- **Triggered on**:
+  - Pushes and pull requests to `main`
+  - Scheduled runs every Tuesday at 03:16 UTC
 
-Caches API responses with localStorage
+### Workflow Overview
 
-Tested with Vitest and React Testing Library
+#### 🧩 Install
 
-🚀 **CI/CD & Deployment**
+- `install-backend` – Installs server dependencies (`npm ci`).
+- `install-client` – Installs client dependencies (`npm ci`).
 
-The app uses **GitHub Actions** for a complete CI/CD pipeline, triggered on:
+#### 🧹 Lint
 
-- Push or pull request to the `main` branch
+- `lint-backend` – Lints the backend with ESLint.
+- `lint-client` – Lints the frontend with ESLint.
 
-🧱 **Pipeline Stages**
+#### 🧪 Test
 
-1. **Install**
+- `test-backend` – Runs backend tests (Jest) with PostgreSQL service.
+- `test-client` – Runs frontend tests (Vitest).
 
-   - Installs dependencies for both `server/` and `client/` using `npm ci`
+#### 🔐 Security
 
-2. **Lint**
+- `codeql` – Static analysis of backend and frontend using GitHub CodeQL.
+- `snyk` – Snyk scans for high-severity vulnerabilities in dependencies (requires `SNYK_TOKEN`).
 
-   - Lints the backend and frontend codebases
+#### 🐳 Docker
 
-3. **Test**
+- `docker` – Builds and pushes backend and frontend Docker images to DockerHub.
+  - Uses `DOCKERHUB_USERNAME` and `DOCKERHUB_TOKEN` secrets.
 
-   - Backend tests run with a PostgreSQL container
-   - Frontend tests use Vitest and React Testing Library
+#### 🛡️ Image Scanning
 
-4. **Security**
+- `trivy` – Scans built Docker images (`backend-image`, `frontend-image`) for high and critical vulnerabilities.
 
-   - **CodeQL** analysis for static code vulnerabilities in JavaScript/TypeScript and GitHub Actions
-   - **Snyk** scans for known vulnerabilities in both frontend and backend dependencies (`--severity-threshold=high`)
+#### 🚀 Deployment
 
-5. **Docker**
+- `deploy-backend` – Deploys backend image to [Railway](https://railway.app) using the Railway CLI and service ID.
+- `deploy-client` – Deploys frontend image to Railway.
 
-   - Builds and pushes Docker images to Docker Hub:
-     - `${{ secrets.DOCKERHUB_USERNAME }}/f1-backend:latest`
-     - `${{ secrets.DOCKERHUB_USERNAME }}/f1-frontend:latest`
+> Deployment only happens from the `main` branch using the `ghcr.io/railwayapp/cli` container.
 
-6. **Vulnerability Scanning**
+---
 
-   - **Trivy** scans Docker images for `HIGH` and `CRITICAL` severity issues
+### Secrets Used
 
-7. **Deployment**
-   - Automatic deployment to **Railway** using Railway CLI
-   - Triggered only on the `main` branch
-   - Uses the following GitHub secrets:
-     - `RAILWAY_PROJECT_ID`
-     - `RAILWAY_TOKEN`
-     - `RAILWAY_SERVER_SERVICE_ID`
-     - `RAILWAY_CLIENT_SERVICE_ID`
+| Secret                      | Purpose                             |
+| --------------------------- | ----------------------------------- |
+| `DOCKERHUB_USERNAME`        | Auth for DockerHub image publishing |
+| `DOCKERHUB_TOKEN`           | Auth for DockerHub image publishing |
+| `SNYK_TOKEN`                | Snyk CLI vulnerability scanning     |
+| `RAILWAY_TOKEN`             | Auth for Railway CLI deployment     |
+| `RAILWAY_PROJECT_ID`        | Project ID for Railway deployment   |
+| `RAILWAY_SERVER_SERVICE_ID` | Backend service ID in Railway       |
+| `RAILWAY_CLIENT_SERVICE_ID` | Frontend service ID in Railway      |
+
+---
+
+This setup ensures reliable testing, vulnerability scanning, container builds, and seamless deployment to production.

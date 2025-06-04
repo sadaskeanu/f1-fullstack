@@ -1,5 +1,13 @@
 import { delay } from "./delay";
 
+/**
+ * Retries an asynchronous function with optional delay and backoff.
+ * - Attempts the function up to `maxRetries` times.
+ * - If a rate limit error (e.g. 429) is detected, waits longer before retrying.
+ * - Uses exponential backoff for rate-limiting, capped at 5 seconds.
+ * - Throws a final error if all attempts fail.
+ */
+
 export async function retry<T>(
   fn: () => Promise<T>,
   maxRetries = 10,

@@ -3,6 +3,14 @@ import prisma from "../config/db";
 import getRedis from "../config/redis";
 import { SECONDS, CACHE_KEYS } from "../constants/constants";
 
+/**
+ * Returns race winners for a given season (year).
+ * - Validates the `year` param.
+ * - Checks Redis cache first; returns cached data if available.
+ * - On cache miss, queries the database and stores the result in Redis.
+ * - Cache is set to expire at the next Sunday 00:00.
+ */
+
 export async function getWinners(
   req: Request,
   res: Response,
@@ -32,7 +40,17 @@ export async function getWinners(
       orderBy: { race: "asc" },
     });
 
-    await redis.set(cacheKey, JSON.stringify(winners), "EX", SECONDS.ONE_WEEK);
+    /**
+     * Sets cache till the closest Sunday.
+     * If today is Sunday - cache dies in a week
+     */
+    const daysTillSunday = 7 - new Date().getDay();
+    await redis.set(
+      cacheKey,
+      JSON.stringify(winners),
+      "EX",
+      (daysTillSunday || 7) * SECONDS.ONE_DAY
+    );
 
     res.json(winners);
   } catch (err) {

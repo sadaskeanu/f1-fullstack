@@ -5,6 +5,12 @@ import {
   mapToWorldChampion,
 } from "../services/WorldChampionService";
 
+/**
+ * Fetches and upserts the world champion for a given season.
+ * - Retrieves external champion data and maps it to internal format.
+ * - Uses Prisma upsert to create or update the worldChampion record.
+ */
+
 export async function upsertWorldChampion(
   season: number
 ): Promise<WorldChampion> {

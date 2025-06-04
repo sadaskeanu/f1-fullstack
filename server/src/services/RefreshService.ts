@@ -5,6 +5,14 @@ import { delay } from "../time/delay";
 import { retry } from "../time/retry";
 import getRedis from "../config/redis";
 
+/**
+ * Refreshes all stored F1 season data in the database and cache.
+ * - For each season: refetches world champion and race winners using retry + delay logic.
+ * - Replaces existing DB records (upsert for champion, replace for races).
+ * - Clears relevant Redis cache keys to trigger fresh fetch on next request.
+ * - Uses exponential backoff on failure to prevent hammering the API.
+ */
+
 export async function refreshSeasonsData(): Promise<void> {
   console.log("Starting refreshSeasonsData...");
 

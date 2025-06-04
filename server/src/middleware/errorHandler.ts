@@ -1,6 +1,13 @@
 import { Request, Response, NextFunction } from "express";
 import { ZodError } from "zod";
 
+/**
+ * Express error-handling middleware.
+ * - Handles Zod validation errors with 400 status and detailed error messages.
+ * - Logs all errors to the console.
+ * - Sends a generic 500 response for unhandled errors.
+ */
+
 export function errorHandler(
   err: unknown,
   req: Request,

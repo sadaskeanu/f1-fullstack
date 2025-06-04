@@ -1,6 +1,12 @@
 import { RaceResponse, RaceChampionData } from "../models/RaceChampionModel";
 import { fetchWithTimeout } from "../time/fetchWithTimeout";
 
+/**
+ * Fetches race winner data for a given F1 season from the Ergast API.
+ * - Uses a timeout for network reliability.
+ * - Throws descriptive errors for HTTP or data issues.
+ */
+
 export async function fetchRaceChampions(
   season: number
 ): Promise<RaceResponse> {
@@ -32,6 +38,11 @@ export async function fetchRaceChampions(
     );
   }
 }
+
+/**
+ * Maps raw Ergast API response to internal RaceChampionData format.
+ * - Includes race name, driver info, team, and world champion flag.
+ */
 
 export function mapToRaceChampions(
   raw: RaceResponse,

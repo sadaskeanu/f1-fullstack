@@ -3,6 +3,12 @@ import { upsertRaceChampions } from "../repositories/raceChampionRepo";
 import { delay } from "../time/delay";
 import { retry } from "../time/retry";
 
+/**
+ * Script to upsert all F1 world champions and race winners from 2005 to current year.
+ * - Uses retry logic for robustness and delay between requests to avoid rate limits.
+ * - Upserts world champion first, then race winners for each year.
+ */
+
 export async function runUpsertAll() {
   const startYear = 2005;
   const currentYear = new Date().getFullYear();

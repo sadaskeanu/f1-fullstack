@@ -2,6 +2,15 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { TIME } from "../constants/constants";
 
+/**
+ * React hook for fetching and caching data in localStorage with a time-to-live (TTL).
+ *
+ * - Tries to load cached data from localStorage using a key and TTL timestamp.
+ * - If cached data is valid, uses it and skips the fetch.
+ * - If not, calls the provided fetch function and stores the result in localStorage.
+ * - Handles loading state and backend/validation errors gracefully.
+ */
+
 export function useCachedData<T>(
   cacheKey: string,
   fetchFn: () => Promise<T>,

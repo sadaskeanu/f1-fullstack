@@ -5,6 +5,13 @@ import {
   mapToRaceChampions,
 } from "../services/RaceChampionService";
 
+/**
+ * Fetches and upserts all race winners for a given season.
+ * - Retrieves external race winner data and maps it to internal format.
+ * - Checks which driver was world champion to flag races.
+ * - Uses Prisma upsert to insert or update each race record.
+ */
+
 export async function upsertRaceChampions(
   season: number
 ): Promise<RaceChampionData[]> {

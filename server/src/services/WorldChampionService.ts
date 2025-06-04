@@ -4,6 +4,12 @@ import type {
 } from "../models/WorldChampionModel";
 import { fetchWithTimeout } from "../time/fetchWithTimeout";
 
+/**
+ * Fetches and maps world champion data for a given season.
+ *   - Sends a GET request to the Ergast API for the season's driver standings.
+ *   - Throws if the response is invalid or contains no standings data.
+ */
+
 export async function fetchWorldChampion(
   season: number
 ): Promise<WorldChampionResponse> {
@@ -36,6 +42,11 @@ export async function fetchWorldChampion(
     );
   }
 }
+
+/**
+ * Extracts the first driver standing from the API response.
+ *   - Maps it to an internal `WorldChampionData` object with season, driver, points, and team info.
+ */
 
 export function mapToWorldChampion(
   raw: WorldChampionResponse

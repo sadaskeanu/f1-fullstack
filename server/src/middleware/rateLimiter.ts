@@ -1,6 +1,13 @@
 import { Request, Response, NextFunction } from "express";
 import { RATE_LIMIT } from "../constants/constants";
 
+/**
+ * Express middleware for basic in-memory rate limiting.
+ * - Tracks request counts per IP within a fixed time window.
+ * - Blocks requests with 429 if limit is exceeded before window resets.
+ * - Resets count after the configured time window.
+ */
+
 type RateLimitRecord = {
   count: number;
   windowStart: number;
