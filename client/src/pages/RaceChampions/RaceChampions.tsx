@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useCallback } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { getRaceChampions } from "../../api/api";
 import BackLink from "../../components/BackLink/BackLink";
@@ -11,20 +11,23 @@ import type { RaceWinner } from "../../types/RaceChampionsData";
 import { useCachedData } from "../../hooks/useCachedData";
 
 export default function Champions() {
-  const { season } = useParams<{ season: string }>();
+  const { season } = useParams();
   const navigate = useNavigate();
+  const year = Number(season);
 
   useEffect(() => {
     if (!season) navigate("/");
   }, [season, navigate]);
 
+  const fetchRaceWinners = useCallback(() => {
+    return getRaceChampions(year);
+  }, [year]);
+
   const {
     data: champions,
     isLoading,
     errorMessage,
-  } = useCachedData<RaceWinner[]>(`raceWinners:${season}`, () =>
-    getRaceChampions(Number(season))
-  );
+  } = useCachedData<RaceWinner[]>(`raceWinners:${year}`, fetchRaceWinners);
 
   if (errorMessage) return <Error message={errorMessage} />;
   if (!champions || isLoading) return <Loader />;
