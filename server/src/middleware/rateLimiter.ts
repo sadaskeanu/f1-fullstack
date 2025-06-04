@@ -1,7 +1,12 @@
 import { Request, Response, NextFunction } from "express";
 import { RATE_LIMIT } from "../constants/constants";
 
-const requestCounts = new Map<string, number[]>();
+type RateLimitRecord = {
+  count: number;
+  windowStart: number;
+};
+
+const requestCounts = new Map<string, RateLimitRecord>();
 
 export const rateLimiter = (
   req: Request,
@@ -10,18 +15,25 @@ export const rateLimiter = (
 ) => {
   const ip = req.ip || "unknown";
   const now = Date.now();
+  const record = requestCounts.get(ip);
 
-  const timestamps = requestCounts.get(ip) || [];
-  const recent = timestamps.filter((ts) => now - ts < RATE_LIMIT.WINDOW_MS);
+  if (record) {
+    const timePassed = now - record.windowStart;
 
-  if (recent.length >= RATE_LIMIT.MAX_REQUESTS) {
-    res
-      .status(429)
-      .json({ message: "Too many requests, please try again later." });
+    if (timePassed < RATE_LIMIT.WINDOW_MS) {
+      if (record.count >= RATE_LIMIT.MAX_REQUESTS) {
+        res
+          .status(429)
+          .json({ message: "Too many requests, please try again later." });
+      }
+
+      record.count += 1;
+    } else {
+      requestCounts.set(ip, { count: 1, windowStart: now });
+    }
+  } else {
+    requestCounts.set(ip, { count: 1, windowStart: now });
   }
-
-  recent.push(now);
-  requestCounts.set(ip, recent);
 
   next();
 };

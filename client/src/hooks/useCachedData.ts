@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import axios from "axios";
 import { TIME } from "../constants/constants";
 
 export function useCachedData<T>(
@@ -31,7 +32,13 @@ export function useCachedData<T>(
         localStorage.setItem(ttlKey, String(now + ttlMs));
       })
       .catch((err) => {
-        setErrorMessage(err?.message || "Failed to fetch data.");
+        if (axios.isAxiosError(err)) {
+          const backendMessage =
+            err.response?.data?.errors?.[0]?.message || err.message;
+          setErrorMessage(backendMessage);
+        } else {
+          setErrorMessage("Unexpected error occurred.");
+        }
       })
       .finally(() => {
         setIsLoading(false);
