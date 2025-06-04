@@ -3,6 +3,7 @@ import { upsertWorldChampion } from "../repositories/worldChampionRepo";
 import { upsertRaceChampions } from "../repositories/raceChampionRepo";
 import { delay } from "../time/delay";
 import { retry } from "../time/retry";
+import { START_YEAR } from "../constants/constants";
 
 /**
  * Script to upsert missing or incomplete F1 data + always refresh current season.
@@ -10,7 +11,7 @@ import { retry } from "../time/retry";
  * - Ensures current season is refreshed every time.
  */
 export async function runUpsertAll() {
-  const startYear = 2005;
+  const startYear = START_YEAR;
   const currentYear = new Date().getFullYear();
 
   console.log(`Checking seasons in DB...`);

@@ -22,3 +22,4 @@ export const RATE_LIMIT = {
 };
 
 export const CURRENT_YEAR = new Date().getFullYear();
+export const START_YEAR = 2005;
