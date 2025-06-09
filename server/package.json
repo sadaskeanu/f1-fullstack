@@ -7,6 +7,7 @@
     "build": "tsc",
     "start": "node dist/index.js",
     "test": "jest --config jest.config.ts",
+    "coverage": "jest --config jest.config.ts --coverage",
     "lint": "eslint .",
     "upsert:all": "ts-node src/scripts/upsertAllChampionsAndRaces.ts",
     "prisma:generate": "prisma generate",

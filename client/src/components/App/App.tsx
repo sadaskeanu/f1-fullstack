@@ -1,7 +1,13 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import WorldsChampions from "../../pages/WorldsChampions/WorldsChampions";
-import RaceChampions from "../../pages/RaceChampions/RaceChampions";
 import styles from "./App.module.css";
+import { lazy } from "react";
+
+const WorldsChampions = lazy(
+  () => import("../../pages/WorldsChampions/WorldsChampions")
+);
+const RaceChampions = lazy(
+  () => import("../../pages/RaceChampions/RaceChampions")
+);
 
 function App() {
   return (

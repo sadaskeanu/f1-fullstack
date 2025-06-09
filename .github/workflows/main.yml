@@ -203,7 +203,7 @@ jobs:
       RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
     steps:
       - uses: actions/checkout@v3
-      - run: railway up --service=$SVC_ID
+      - run: railway up --service=$SVC_ID --detach
 
   # DEPLOY CLIENT
   deploy-client:
@@ -218,4 +218,4 @@ jobs:
       RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
     steps:
       - uses: actions/checkout@v3
-      - run: railway up --service=$SVC_ID
+      - run: railway up --service=$SVC_ID --detach
