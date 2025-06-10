@@ -7,6 +7,7 @@ import Loader from "../../components/Loader/Loader";
 import List from "../../components/List/List";
 import Error from "../../components/Error/Error";
 import Card from "../../components/Card/Card";
+import { Empty } from "../../components/Empty/Empty";
 import type { RaceWinner } from "../../types/RaceChampionsData";
 import { useCachedData } from "../../hooks/useCachedData";
 
@@ -31,6 +32,10 @@ export default function Champions() {
 
   if (errorMessage) return <Error message={errorMessage} />;
   if (!champions || isLoading) return <Loader />;
+
+  if (champions.length === 0) {
+    return <Empty message={`No race winners found for season ${season}.`} />;
+  }
 
   return (
     <>
