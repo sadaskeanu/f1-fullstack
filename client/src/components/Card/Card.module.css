@@ -8,10 +8,18 @@
   padding: 15px;
   background-color: #dbaa50;
   font-weight: 600;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.35);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.4);
 }
 
 .card.isHighlighted {
-  border-color: rgb(26, 86, 135);
+  background-color: #e0d9be;
+  box-shadow: 0 0 12px 4px rgba(26, 86, 135, 0.5);
 }
 
 .column {

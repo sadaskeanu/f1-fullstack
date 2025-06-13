@@ -1,5 +1,5 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import styles from "./App.module.css";
+import Layout from "../Layout/Layout";
 import { lazy } from "react";
 
 const WorldsChampions = lazy(
@@ -11,14 +11,14 @@ const RaceChampions = lazy(
 
 function App() {
   return (
-    <div className={styles.app}>
+    <Layout>
       <Router>
         <Routes>
           <Route index element={<WorldsChampions />} />
           <Route path="/season/:season" element={<RaceChampions />} />
         </Routes>
       </Router>
-    </div>
+    </Layout>
   );
 }
 
