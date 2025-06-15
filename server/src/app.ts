@@ -48,6 +48,8 @@ app.get("/test-db", async (_req: Request, res: Response) => {
   }
 });
 
+//to test ratelimiter irl:
+
 app.get("/api/test-rate-limit", rateLimiter, (req, res) => {
   res.send("✅ Request passed the rate limiter");
 });

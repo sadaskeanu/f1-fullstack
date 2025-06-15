@@ -4,7 +4,12 @@ import type { RaceWinner } from "../types/RaceChampionsData";
 
 const API_BASE = import.meta.env.VITE_API_BASE as string;
 
-export const apiClient = axios.create({ baseURL: API_BASE });
+export const apiClient = axios.create({
+  baseURL: API_BASE,
+  headers: {
+    "x-api-key": import.meta.env.VITE_PUBLIC_API_KEY || "frontend-client",
+  },
+});
 
 export async function getWorldChampions(): Promise<WorldChampion[]> {
   const response = await apiClient.get<WorldChampion[]>("/seasons");
