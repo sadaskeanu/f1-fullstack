@@ -17,9 +17,10 @@ export const SCHEDULING = {
 };
 
 export const RATE_LIMIT = {
-  WINDOW_MS: 15 * 60 * 1000,
+  WINDOW_MS: 50 * 1000,
   MAX_REQUESTS: 100,
+  REDIS_EXPIRE_SECONDS: 60,
+  TOKEN_BUCKET_KEY_PREFIX: "rate-limit:",
 };
-
 export const CURRENT_YEAR = new Date().getFullYear();
 export const START_YEAR = 2005;

@@ -1,8 +1,8 @@
 import prisma from "../config/db";
 import { upsertWorldChampion } from "../repositories/worldChampionRepo";
 import { upsertRaceChampions } from "../repositories/raceChampionRepo";
-import { delay } from "../time/delay";
-import { retry } from "../time/retry";
+import { delay } from "../utils/time/delay";
+import { retry } from "../utils/time/retry";
 import { START_YEAR } from "../constants/constants";
 
 /**

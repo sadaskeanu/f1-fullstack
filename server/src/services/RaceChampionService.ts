@@ -1,5 +1,5 @@
 import { RaceResponse, RaceChampionData } from "../models/RaceChampionModel";
-import { fetchWithTimeout } from "../time/fetchWithTimeout";
+import { fetchWithTimeout } from "../utils/time/fetchWithTimeout";
 
 /**
  * Fetches race winner data for a given F1 season from the Ergast API.

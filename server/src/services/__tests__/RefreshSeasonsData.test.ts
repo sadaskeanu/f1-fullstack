@@ -3,8 +3,8 @@ import prisma from "../../config/db";
 import getRedis from "../../config/redis";
 import { mapToWorldChampion } from "../WorldChampionService";
 import { mapToRaceChampions } from "../RaceChampionService";
-import { retry } from "../../time/retry";
-import { delay } from "../../time/delay";
+import { retry } from "../../utils/time/retry";
+import { delay } from "../../utils/time/delay";
 
 jest.mock("../../config/db", () => ({
   worldChampion: {
@@ -20,8 +20,8 @@ jest.mock("../../config/db", () => ({
 jest.mock("../../config/redis");
 jest.mock("../WorldChampionService");
 jest.mock("../RaceChampionService");
-jest.mock("../../time/retry");
-jest.mock("../../time/delay");
+jest.mock("../../utils/time/retry");
+jest.mock("../../utils/time/delay");
 
 describe("refreshSeasonsData", () => {
   const mockRedis = {

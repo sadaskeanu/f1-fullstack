@@ -1,8 +1,8 @@
 import { runUpsertAll } from "../upsertAllChampionsAndRaces";
 import * as worldRepo from "../../repositories/worldChampionRepo";
 import * as raceRepo from "../../repositories/raceChampionRepo";
-import * as delayUtils from "../../time/delay";
-import * as retryUtils from "../../time/retry";
+import * as delayUtils from "../../utils/time/delay";
+import * as retryUtils from "../../utils/time/retry";
 import prisma from "../../config/db";
 
 jest.mock("../../config/db", () => ({

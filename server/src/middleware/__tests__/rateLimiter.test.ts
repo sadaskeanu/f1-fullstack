@@ -1,34 +1,75 @@
-import express from "express";
-import request from "supertest";
 import { rateLimiter } from "../rateLimiter";
+import { redisMock } from "../../__mocks__/redisMock";
+import { RATE_LIMIT } from "../../constants/constants";
 
-describe("rateLimiter middleware", () => {
-  let app: express.Express;
+jest.mock("../../config/redis", () => {
+  return {
+    __esModule: true,
+    default: jest.fn(() => redisMock),
+  };
+});
 
-  beforeEach(() => {
-    app = express();
-    app.get("/test", rateLimiter, (req, res) => {
-      res.status(200).send("OK");
-    });
+const mockReq = (ip = "1.2.3.4") => ({ ip, headers: {} } as any);
+
+const mockRes = () => {
+  const res: any = {};
+  res.status = jest.fn(() => res);
+  res.json = jest.fn(() => res);
+  return res;
+};
+
+const next = jest.fn();
+
+beforeEach(() => {
+  redisMock.clear();
+  jest.clearAllMocks();
+  jest.restoreAllMocks();
+});
+
+test("allows request when tokens are available", async () => {
+  const req = mockReq();
+  const res = mockRes();
+
+  await rateLimiter(req, res, next);
+
+  expect(next).toHaveBeenCalled();
+});
+
+test("blocks request when tokens are depleted", async () => {
+  const req = mockReq();
+  const res = mockRes();
+
+  const now = Date.now();
+  jest.spyOn(Date, "now").mockReturnValue(now);
+  const key = `rate-limit:ip:${req.ip}`;
+  redisMock.data.set(key, {
+    tokens: "0",
+    lastRefill: `${now}`,
   });
 
-  it("allows requests under the limit", async () => {
-    for (let i = 0; i < 5; i++) {
-      const res = await request(app).get("/test");
-      expect(res.status).toBe(200);
-      expect(res.text).toBe("OK");
-    }
+  await rateLimiter(req, res, next);
+
+  expect(res.status).toHaveBeenCalledWith(429);
+  expect(res.json).toHaveBeenCalledWith({
+    message: "Too many requests. Please try again later.",
+  });
+});
+
+test("refills tokens after time passes", async () => {
+  const req = mockReq();
+  const res = mockRes();
+
+  const now = Date.now();
+  const past = now - RATE_LIMIT.WINDOW_MS;
+  jest.spyOn(Date, "now").mockReturnValue(now);
+
+  const key = `rate-limit:ip:${req.ip}`;
+  redisMock.data.set(key, {
+    tokens: "0",
+    lastRefill: `${past}`,
   });
 
-  it("blocks requests over the limit", async () => {
-    const ip = "1.2.3.4";
+  await rateLimiter(req, res, next);
 
-    for (let i = 0; i < 100; i++) {
-      await request(app).get("/test").set("X-Forwarded-For", ip);
-    }
-
-    const res = await request(app).get("/test").set("X-Forwarded-For", ip);
-    expect(res.status).toBe(429);
-    expect(res.body.message).toBe("Too many requests, please try again later.");
-  });
+  expect(next).toHaveBeenCalled();
 });

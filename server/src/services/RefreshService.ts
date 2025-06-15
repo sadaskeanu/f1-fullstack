@@ -1,8 +1,8 @@
 import prisma from "../config/db";
 import { fetchWorldChampion, mapToWorldChampion } from "./WorldChampionService";
 import { fetchRaceChampions, mapToRaceChampions } from "./RaceChampionService";
-import { delay } from "../time/delay";
-import { retry } from "../time/retry";
+import { delay } from "../utils/time/delay";
+import { retry } from "../utils/time/retry";
 import getRedis from "../config/redis";
 
 /**

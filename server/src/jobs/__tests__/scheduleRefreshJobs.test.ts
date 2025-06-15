@@ -9,7 +9,7 @@ jest.mock("../queues/refreshSeasonsQueue", () => ({
   },
 }));
 
-jest.mock("../../time/delay", () => ({
+jest.mock("../../utils/time/delay", () => ({
   delay: jest.fn().mockResolvedValue(undefined),
 }));
 

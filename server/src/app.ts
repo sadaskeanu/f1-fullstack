@@ -13,6 +13,7 @@ import { BullAdapter } from "@bull-board/api/bullAdapter";
 import { refreshSeasonsQueue } from "./jobs/queues/refreshSeasonsQueue";
 import { logger } from "./middleware/logger";
 import { errorHandler } from "./middleware/errorHandler";
+import { rateLimiter } from "./middleware/rateLimiter";
 
 export const app = express();
 
@@ -45,6 +46,10 @@ app.get("/test-db", async (_req: Request, res: Response) => {
     console.error("DB connection error:", err);
     res.status(500).send("DB connection error");
   }
+});
+
+app.get("/api/test-rate-limit", rateLimiter, (req, res) => {
+  res.send("✅ Request passed the rate limiter");
 });
 
 app.use("/api/seasons", seasonsRoutes);

@@ -2,7 +2,7 @@ import type {
   WorldChampionResponse,
   WorldChampionData,
 } from "../models/WorldChampionModel";
-import { fetchWithTimeout } from "../time/fetchWithTimeout";
+import { fetchWithTimeout } from "../utils/time/fetchWithTimeout";
 
 /**
  * Fetches and maps world champion data for a given season.
