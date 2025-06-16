@@ -11,7 +11,7 @@ export const CACHE_KEYS = {
 };
 
 export const SCHEDULING = {
-  WEEKLY_REFRESH_CRON: "0 0 * * 0",
+  WEEKLY_REFRESH_CRON: "0 0 * * 1",
   MAX_SCHEDULE_RETRIES: 3,
   SCHEDULE_RETRY_DELAY_MS: 1000,
 };

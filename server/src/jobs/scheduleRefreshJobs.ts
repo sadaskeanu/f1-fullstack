@@ -6,7 +6,7 @@ import { SCHEDULING } from "../constants/constants";
  * - Ensures Redis queue is ready before scheduling.
  * - Checks if the weekly job is already scheduled (via cron).
  * - If not, schedules it using a repeatable cron expression.
- * - Retries on failure up to a configured max.
+ * - Optionally triggers a one-time manual refresh on deploy (via .env flag).
  */
 
 export async function scheduleRefreshJobs() {
@@ -32,6 +32,14 @@ export async function scheduleRefreshJobs() {
         console.log("✅ Scheduled weekly refresh job");
       } else {
         console.log("ℹ️ Weekly refresh job already scheduled");
+      }
+
+      const shouldRefreshOnDeploy = process.env.REFRESH_ON_DEPLOY === "true";
+      if (shouldRefreshOnDeploy) {
+        await refreshSeasonsQueue.add({}, { jobId: "manual-deploy-refresh" });
+        console.log(
+          "🚀 One-time refresh triggered due to REFRESH_ON_DEPLOY=true"
+        );
       }
 
       break;
