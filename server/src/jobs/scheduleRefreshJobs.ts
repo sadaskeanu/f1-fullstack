@@ -34,6 +34,8 @@ export async function scheduleRefreshJobs() {
         console.log("ℹ️ Weekly refresh job already scheduled");
       }
 
+      await refreshSeasonsQueue.removeJobs("manual-deploy-refresh");
+
       const shouldRefreshOnDeploy = process.env.REFRESH_ON_DEPLOY === "true";
       if (shouldRefreshOnDeploy) {
         await refreshSeasonsQueue.add({}, { jobId: "manual-deploy-refresh" });
