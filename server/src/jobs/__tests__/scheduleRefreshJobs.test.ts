@@ -45,6 +45,6 @@ describe("scheduleRefreshJobs", () => {
     await scheduleRefreshJobs();
 
     expect(mockGetRepeatableJobs).toHaveBeenCalledTimes(3);
-    expect(mockAdd).toHaveBeenCalledWith({}, { repeat: { cron: "0 0 * * 0" } });
+    expect(mockAdd).toHaveBeenCalledWith({}, { repeat: { cron: "0 0 * * 1" } });
   });
 });
