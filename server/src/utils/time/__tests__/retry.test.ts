@@ -47,10 +47,10 @@ describe("retry()", () => {
     const fn = jest.fn().mockRejectedValue(new Error("Boom"));
 
     await expect(retry(fn, 10, 1000)).rejects.toThrow(
-      "Failed after 3 retries. Last error: Boom"
+      "Failed after 10 retries. Last error: Boom"
     );
-    expect(fn).toHaveBeenCalledTimes(3);
-    expect(delay).toHaveBeenCalledTimes(2);
+    expect(fn).toHaveBeenCalledTimes(10);
+    expect(delay).toHaveBeenCalledTimes(9);
   });
 
   it("limits delay for rate-limited errors", async () => {
