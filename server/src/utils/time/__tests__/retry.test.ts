@@ -23,7 +23,7 @@ describe("retry()", () => {
       .mockRejectedValueOnce(new Error("429 Too Many Requests"))
       .mockResolvedValueOnce("Success after retry");
 
-    const result = await retry(fn, 3, 1000);
+    const result = await retry(fn, 10, 1000);
 
     expect(result).toBe("Success after retry");
     expect(fn).toHaveBeenCalledTimes(2);
@@ -36,7 +36,7 @@ describe("retry()", () => {
       .mockRejectedValueOnce(new Error("Some error"))
       .mockResolvedValueOnce("Recovered");
 
-    const result = await retry(fn, 3, 1000);
+    const result = await retry(fn, 10, 1000);
 
     expect(result).toBe("Recovered");
     expect(fn).toHaveBeenCalledTimes(2);
@@ -46,7 +46,7 @@ describe("retry()", () => {
   it("retries on generic error and fails after max retries", async () => {
     const fn = jest.fn().mockRejectedValue(new Error("Boom"));
 
-    await expect(retry(fn, 3, 1000)).rejects.toThrow(
+    await expect(retry(fn, 10, 1000)).rejects.toThrow(
       "Failed after 3 retries. Last error: Boom"
     );
     expect(fn).toHaveBeenCalledTimes(3);

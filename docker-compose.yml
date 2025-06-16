@@ -32,6 +32,23 @@ services:
       timeout: 5s
       retries: 5
 
+  worker:
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+    command: ["yarn", "ts-node", "src/worker.ts"]
+    env_file:
+      - ./server/.env
+    environment:
+      REDIS_HOST: redis
+      DATABASE_URL: ${DATABASE_URL}
+    depends_on:
+      redis:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
+    restart: always
+
   backend:
     build:
       context: ./server
@@ -41,7 +58,7 @@ services:
     environment:
       ERGAST_API_BASE: https://api.jolpi.ca/ergast/
       REDIS_HOST: redis
-      DATABASE_URL: postgres://neondb_owner:npg_yT2IqecvrF9z@postgres:5432/neondb
+      DATABASE_URL: ${DATABASE_URL}
     ports:
       - "4000:4000"
     depends_on:
