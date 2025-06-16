@@ -24,4 +24,6 @@ async function startServer() {
   }
 }
 
+console.log(`REFRESH_ON_DEPLOY = ${process.env.REFRESH_ON_DEPLOY}`);
+
 startServer();
