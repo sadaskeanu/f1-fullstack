@@ -24,3 +24,13 @@ export const RATE_LIMIT = {
 };
 export const CURRENT_YEAR = new Date().getFullYear();
 export const START_YEAR = 2005;
+
+export const REFRESH_SOURCES = {
+  MANUAL: "manual",
+  DEPLOY: "deploy",
+  CRON: "cron",
+  UNKNOWN: "unknown",
+} as const;
+
+export type RefreshSource =
+  (typeof REFRESH_SOURCES)[keyof typeof REFRESH_SOURCES];
