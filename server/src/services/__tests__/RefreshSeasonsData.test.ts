@@ -5,6 +5,7 @@ import { mapToWorldChampion } from "../WorldChampionService";
 import { mapToRaceChampions } from "../RaceChampionService";
 import { retry } from "../../utils/time/retry";
 import { delay } from "../../utils/time/delay";
+import { REFRESH_SOURCES } from "../../constants/constants";
 
 jest.mock("../../config/db", () => ({
   worldChampion: {
@@ -26,12 +27,13 @@ jest.mock("../../utils/time/delay");
 describe("refreshSeasonsData", () => {
   const mockRedis = {
     del: jest.fn(),
+    set: jest.fn(),
   };
 
   beforeEach(() => {
     jest.clearAllMocks();
 
-    (getRedis as jest.Mock).mockReturnValue(mockRedis);
+    (getRedis as jest.Mock).mockImplementation(() => mockRedis);
 
     (prisma.worldChampion.findMany as jest.Mock).mockResolvedValue([
       { season: 2022 },
@@ -66,25 +68,34 @@ describe("refreshSeasonsData", () => {
   });
 
   it("refreshes data for each season and updates Redis", async () => {
-    await refreshSeasonsData();
+    await refreshSeasonsData(REFRESH_SOURCES.DEPLOY);
 
     expect(prisma.worldChampion.findMany).toHaveBeenCalled();
-
-    expect(retry).toHaveBeenCalledWith(expect.any(Function), 3, 500);
-    expect(mapToWorldChampion).toHaveBeenCalled();
-    expect(mapToRaceChampions).toHaveBeenCalledWith(
-      expect.anything(),
-      "leclerc"
-    );
-
     expect(prisma.worldChampion.upsert).toHaveBeenCalled();
     expect(prisma.raceChampion.deleteMany).toHaveBeenCalledWith({
       where: { season: 2022 },
     });
     expect(prisma.raceChampion.createMany).toHaveBeenCalled();
 
+    expect(retry).toHaveBeenCalledWith(expect.any(Function), 5, 500);
+    expect(mapToWorldChampion).toHaveBeenCalled();
+    expect(mapToRaceChampions).toHaveBeenCalledWith(
+      expect.anything(),
+      "leclerc"
+    );
+
     expect(mockRedis.del).toHaveBeenCalledWith("seasons");
     expect(mockRedis.del).toHaveBeenCalledWith("winners:2022");
+
+    expect(mockRedis.set).toHaveBeenCalledWith(
+      "lastRefreshedAt",
+      expect.any(String)
+    );
+    expect(mockRedis.set).toHaveBeenCalledWith(
+      "lastRefreshSource",
+      REFRESH_SOURCES.DEPLOY
+    );
+
     expect(delay).toHaveBeenCalledWith(500);
   });
 });
