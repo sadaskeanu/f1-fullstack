@@ -26,6 +26,14 @@ The design draws inspiration from retro F1 posters to give a nostalgic, race-day
 
 - **Modern Fullstack Stack**: Built with Node.js, PostgreSQL, React, Typescript, and Docker — all wired together with CI/CD.
 
+- **Full Refresh System**: Automatically keeps race data up-to-date via scheduled background refresh jobs (Bull + Redis).
+
+- **Safe Deploy-Time Refresh**: Supports one-time data refresh after deployment using `REFRESH_ON_DEPLOY` flag.
+
+- **Refresh Audit Metadata**: Tracks last refresh timestamp and refresh trigger source (manual, deploy, cron) stored in Redis for monitoring.
+
+- **Redis-powered Rate Limiting (Token Bucket Algorithm)**: Implements burst-friendly request limiting with Redis-backed token bucket strategy, ensuring fair access control while maintaining high availability even under sudden load spikes (supports optional API keys).
+
 - **Deployed to the Cloud**: Hosted on Railway
 
 ## Technologies Used
@@ -161,8 +169,11 @@ The backend (`server/src`) is organized into dedicated folders based on responsi
 - **`models/`** – TypeScript types and API response models.
 - **`config/`** – App setup for Redis, database, etc.
 - **`constants/`** – Centralized constants (timeouts, rate limits, cache keys).
-- **`time/`** – Utility functions for delay, retry logic, and fetch timeouts.
+- **`utils/`** - Small helper functions and utilities:
+  **`time/`** - Delay, retry logic, exponential backoff handling for external API requests.
+  **`users/`** - Logic for user-related operations such as generating Redis keys for rate limiting.
 - **`scripts/`** – CLI scripts for manual or one-time tasks (e.g. batch upserts).
+- **`worker.ts`** - Dedicated worker entry point to run Bull background jobs independently from API
 
 #### Pros
 
