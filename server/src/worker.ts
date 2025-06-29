@@ -12,22 +12,29 @@ async function startWorker() {
 
   try {
     await refreshSeasonsQueue.isReady();
-    console.log("✅ Connected to Redis, queue is ready");
+    console.log("Connected to Redis, queue is ready");
 
-    refreshSeasonsQueue.process(async () => {
-      console.log("🔁 Running scheduled refreshSeasonsData job...");
-      await refreshSeasonsData();
+    refreshSeasonsQueue.process("*", 300000, async (job) => {
+      console.log(`Job ${job.id} started at ${new Date().toISOString()}`);
+
+      try {
+        await refreshSeasonsData("cron");
+        console.log(`refreshSeasonsData completed for job ${job.id}`);
+      } catch (err) {
+        console.error(`refreshSeasonsData failed for job ${job.id}:`, err);
+        throw err;
+      }
     });
 
     refreshSeasonsQueue.on("completed", (job) => {
-      console.log(`✅ Job ${job.id} completed`);
+      console.log(`Job ${job.id} completed`);
     });
 
     refreshSeasonsQueue.on("failed", (job, err) => {
-      console.error(`❌ Job ${job?.id} failed:`, err);
+      console.error(`Job ${job?.id} failed:`, err);
     });
   } catch (err) {
-    console.error("❌ Worker failed to initialize:", err);
+    console.error("Worker failed to initialize:", err);
     process.exit(1);
   }
 }

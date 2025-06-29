@@ -75,10 +75,10 @@ export async function refreshSeasonsData(
       await redis.del("seasons");
       await redis.del(`winners:${season}`);
 
-      console.log(`✅ Refreshed season ${season}`);
+      console.log(`Refreshed season ${season}`);
       baseDelay = 500;
     } catch (err: any) {
-      console.error(`❌ Failed to refresh season ${season}: ${err.message}`);
+      console.error(`Failed to refresh season ${season}: ${err.message}`);
       baseDelay *= 2;
     }
 

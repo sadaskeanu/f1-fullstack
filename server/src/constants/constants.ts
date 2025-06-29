@@ -9,11 +9,16 @@ export const CACHE_KEYS = {
   SEASONS: "seasons",
   WINNERS_PREFIX: "winners:",
 };
+export const REFRESH_JOB_SCHEDULES = [
+  { cron: "0 22 * * 0", jobId: "weekly-refresh-primary" }, // Sunday 22:00
+  { cron: "0 2 * * 1", jobId: "weekly-refresh-retry" }, // Monday 02:00
+  { cron: "0 6 * * 1", jobId: "weekly-refresh-final-check" }, // Monday 06:00
+];
 
-export const SCHEDULING = {
+export const RETRY_SETTINGS = {
   WEEKLY_REFRESH_CRON: "0 0 * * 1",
-  MAX_SCHEDULE_RETRIES: 3,
-  SCHEDULE_RETRY_DELAY_MS: 1000,
+  MAX_RETRIES: 3,
+  RETRY_DELAY_MS: 1000,
 };
 
 export const RATE_LIMIT = {

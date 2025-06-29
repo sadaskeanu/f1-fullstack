@@ -3,11 +3,9 @@ import { refreshSeasonsData } from "../services/RefreshService";
 
 /**
  * Registers a processor for the refreshSeasonsQueue.
- * - Runs the refreshSeasonsData service when the job is triggered.
- * - Intended to be called on a schedule (e.g. every Sunday at 00:00).
+ * - Always runs refreshSeasonsData when scheduled.
  */
-
 refreshSeasonsQueue.process(async () => {
-  console.log("Running scheduled refreshSeasonsData job");
-  await refreshSeasonsData();
+  console.log("Running scheduled refresh job");
+  await refreshSeasonsData("cron");
 });

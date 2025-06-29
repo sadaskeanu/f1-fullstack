@@ -14,6 +14,7 @@ import { refreshSeasonsQueue } from "./jobs/queues/refreshSeasonsQueue";
 import { logger } from "./middleware/logger";
 import { errorHandler } from "./middleware/errorHandler";
 import { rateLimiter } from "./middleware/rateLimiter";
+import adminRoutes from "./routes/admin";
 
 export const app = express();
 
@@ -48,11 +49,11 @@ app.get("/test-db", async (_req: Request, res: Response) => {
   }
 });
 
-//to test ratelimiter irl:
-
 app.get("/api/test-rate-limit", rateLimiter, (req, res) => {
-  res.send("✅ Request passed the rate limiter");
+  res.send("Request passed the rate limiter");
 });
+
+app.use("/admin", adminRoutes);
 
 app.use("/api/seasons", seasonsRoutes);
 app.use("/api", winnersRoutes);
