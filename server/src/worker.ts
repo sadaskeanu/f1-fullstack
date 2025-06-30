@@ -14,7 +14,7 @@ async function startWorker() {
     await refreshSeasonsQueue.isReady();
     console.log("Connected to Redis, queue is ready");
 
-    refreshSeasonsQueue.process("*", 300000, async (job) => {
+    refreshSeasonsQueue.process("*", async (job) => {
       console.log(`Job ${job.id} started at ${new Date().toISOString()}`);
 
       try {

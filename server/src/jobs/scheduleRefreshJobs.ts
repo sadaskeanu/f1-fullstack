@@ -36,6 +36,7 @@ export async function scheduleRefreshJobs() {
             {
               repeat: { cron: schedule.cron },
               jobId: schedule.jobId,
+              timeout: 300000,
             }
           );
           console.log(`Scheduled job: ${schedule.jobId} at ${schedule.cron}`);

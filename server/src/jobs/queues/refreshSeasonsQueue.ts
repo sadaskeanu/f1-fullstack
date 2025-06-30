@@ -16,6 +16,9 @@ export const refreshSeasonsQueue = new Queue("refresh-seasons", {
     password: parsed.password || undefined,
     family: 0,
   },
+  settings: {
+    lockDuration: 600000,
+  },
 });
 
 refreshSeasonsQueue.on("error", (err) => {
