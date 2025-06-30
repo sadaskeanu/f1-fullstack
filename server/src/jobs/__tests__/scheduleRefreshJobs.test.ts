@@ -41,9 +41,7 @@ describe("scheduleRefreshJobs", () => {
 
   it("retries on failure and schedules all missing jobs", async () => {
     mockIsReady.mockResolvedValue(undefined);
-
     const mockJobs: { id: string; cron: string }[] = [];
-
     const error = new Error("Queue error");
 
     mockGetRepeatableJobs
@@ -64,6 +62,7 @@ describe("scheduleRefreshJobs", () => {
         {
           repeat: { cron: job.cron },
           jobId: job.jobId,
+          timeout: 300000,
         }
       );
     }
@@ -73,7 +72,6 @@ describe("scheduleRefreshJobs", () => {
 
   it("adds manual-deploy-refresh job if REFRESH_ON_DEPLOY is true", async () => {
     process.env.REFRESH_ON_DEPLOY = "true";
-
     const mockJobs: { id: string; cron: string }[] = [];
 
     mockIsReady.mockResolvedValue(undefined);
@@ -84,7 +82,10 @@ describe("scheduleRefreshJobs", () => {
 
     expect(mockAdd).toHaveBeenCalledWith(
       {},
-      { jobId: "manual-deploy-refresh" }
+      expect.objectContaining({
+        jobId: "manual-deploy-refresh",
+        timeout: 300000,
+      })
     );
   });
 });

@@ -48,7 +48,10 @@ export async function scheduleRefreshJobs() {
       await refreshSeasonsQueue.removeJobs("manual-deploy-refresh");
 
       if (process.env.REFRESH_ON_DEPLOY === "true") {
-        await refreshSeasonsQueue.add({}, { jobId: "manual-deploy-refresh" });
+        await refreshSeasonsQueue.add(
+          {},
+          { jobId: "manual-deploy-refresh", timeout: 300000 }
+        );
         console.log("One-time refresh triggered due to REFRESH_ON_DEPLOY=true");
       }
 
